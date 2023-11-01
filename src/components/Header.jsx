@@ -1,18 +1,17 @@
-import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, NavLink } from "react-router-dom";
 import { useLogoutMutation } from "../slices/usersApiSlice";
 import { logout } from "../slices/authSlice";
 import { resetCart } from "../slices/cartSlice";
 import { showSnackbar } from "../slices/snackbarSlice";
-import { Link } from "react-router-dom";
+
 import SearchIcon from "@mui/icons-material/Search";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import LogoutIcon from "@mui/icons-material/ExitToApp";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import Snackbar from "@mui/material/Snackbar";
-import Alert from "@mui/material/Alert";
 
+/* Refactor Later
+ */
 const Header = () => {
   const { cartItems } = useSelector((state) => state.cart);
   const { userInfo } = useSelector((state) => state.auth);
@@ -40,12 +39,9 @@ const Header = () => {
   };
 
   return (
-    <div className="bg-gray-800 shadow-md">
+    <div className="bg-gray-800 shadow-md mb-8">
       <div className="container mx-auto flex items-center justify-between">
-        {/* ... Logo and Brand Name ... */}
-
         <div className="flex items-center">
-          {/* Increased logo width and height for zoom effect */}
           <img
             src="/img/Logo.png"
             alt="MinimalAura Logo"
@@ -54,19 +50,48 @@ const Header = () => {
           <div className="text-2xl font-semibold">MinimalAura</div>
         </div>
         <div className="flex space-x-6 items-center">
-          <Link to="/" className="text-indigo-400 hover:text-indigo-500">
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
+              isActive
+                ? "text-indigo-400 hover:text-indigo-500"
+                : "hover:text-indigo-500"
+            }
+          >
             Home
-          </Link>
-          <Link to="/products" className="hover:text-indigo-500">
+          </NavLink>
+          <NavLink
+            to="/products"
+            className={({ isActive }) =>
+              isActive
+                ? "text-indigo-400 hover:text-indigo-500"
+                : "hover:text-indigo-500"
+            }
+          >
             Products
-          </Link>
+          </NavLink>
+          <NavLink
+            to="/profile"
+            className={({ isActive }) =>
+              isActive
+                ? "text-indigo-400 hover:text-indigo-500"
+                : "hover:text-indigo-500"
+            }
+          >
+            Profile
+          </NavLink>
+          <NavLink
+            to="/cart"
+            className={({ isActive }) =>
+              isActive
+                ? "text-indigo-400 hover:text-indigo-500"
+                : "hover:text-indigo-500"
+            }
+          >
+            <span className="mr-2"> Cart</span>
+            <ShoppingCartIcon className="hover:text-indigo-500 cursor-pointer" />
+          </NavLink>
 
-          {/* Search Icon */}
-          <SearchIcon className="hover:text-indigo-500 cursor-pointer" />
-          {/* Cart Icon */}
-          <ShoppingCartIcon className="hover:text-indigo-500 cursor-pointer" />
-
-          {/* Conditional Rendering for User */}
           {userInfo ? (
             <>
               <div className="flex items-center space-x-2">
@@ -75,17 +100,22 @@ const Header = () => {
                   {userInfo.name}
                 </div>
               </div>
-
-              {/* Logout */}
               <LogoutIcon
                 className="hover:text-indigo-500 cursor-pointer"
                 onClick={logoutHandler}
               />
             </>
           ) : (
-            <Link to="/login" className="hover:text-indigo-500">
+            <NavLink
+              to="/login"
+              className={({ isActive }) =>
+                isActive
+                  ? "text-indigo-400 hover:text-indigo-500"
+                  : "hover:text-indigo-500"
+              }
+            >
               Login
-            </Link>
+            </NavLink>
           )}
         </div>
       </div>
