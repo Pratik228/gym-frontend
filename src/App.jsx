@@ -10,6 +10,7 @@ import Layout from "./components/Layout";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import CartScreen from "./screens/CartScreen";
+import CustomerServiceScreen from "./screens/CustomerServiceScreen";
 
 const darkTheme = createTheme({
   palette: {
@@ -31,6 +32,7 @@ const App = () => {
           <Route path="/products" element={<ProductScreen />} />
           <Route path="/cart" element={<CartScreen />} />
           <Route path="/profile" element={<CustomerProfileScreen />} />
+          <Route path="/customer-service" element={<CustomerServiceScreen />} />
         </Route>
       </Routes>
     </ThemeProvider>

@@ -70,16 +70,18 @@ const Header = () => {
           >
             Products
           </NavLink>
-          <NavLink
-            to="/profile"
-            className={({ isActive }) =>
-              isActive
-                ? "text-indigo-400 hover:text-indigo-500"
-                : "hover:text-indigo-500"
-            }
-          >
-            Profile
-          </NavLink>
+          {userInfo && (
+            <NavLink
+              to="/profile"
+              className={({ isActive }) =>
+                isActive
+                  ? "text-indigo-400 hover:text-indigo-500"
+                  : "hover:text-indigo-500"
+              }
+            >
+              Profile
+            </NavLink>
+          )}
           <NavLink
             to="/cart"
             className={({ isActive }) =>
@@ -91,6 +93,19 @@ const Header = () => {
             <span className="mr-2"> Cart</span>
             <ShoppingCartIcon className="hover:text-indigo-500 cursor-pointer" />
           </NavLink>
+
+          {userInfo && (
+            <NavLink
+              to="/customer-service"
+              className={({ isActive }) =>
+                isActive
+                  ? "text-indigo-400 hover:text-indigo-500"
+                  : "hover:text-indigo-500"
+              }
+            >
+              <span className="mr-2">Service</span>
+            </NavLink>
+          )}
 
           {userInfo ? (
             <>
