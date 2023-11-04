@@ -15,6 +15,7 @@ import {
 import ShoppingCart from "@mui/icons-material/ShoppingCart";
 
 import { addToCart } from "../slices/cartSlice";
+import { useGetProductsQuery } from "../slices/productsApiSlice";
 
 const ProductGrid = ({ products, addToCartHandler }) => (
   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
@@ -25,12 +26,13 @@ const ProductGrid = ({ products, addToCartHandler }) => (
       >
         <img
           src={product.image}
-          alt={product.title}
+          alt={product.name}
           className="flex-grow object-cover h-48 mb-4"
         />
         <div className="flex-grow p-2">
-          <h2 className="text-lg mb-2">{product.title}</h2>
-          <p className="text-md mb-2">${product.price}</p>
+          <h2 className="text-lg mb-2">{product.brand}</h2>
+          <h2 className="text-lg mb-2">{product.name}</h2>
+          <p className="text-md mb-2">${Number(product.price)}</p>
           <p className="text-sm leading-5 mb-4">{product.description}</p>
         </div>
         <div className="flex justify-end items-center gap-2">
@@ -65,33 +67,20 @@ const ProductGrid = ({ products, addToCartHandler }) => (
 );
 
 function ProductScreen() {
-  const [products, setProducts] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [searchLoading, setSearchLoading] = useState(false); // state for search loading
-  const [searchKeyword, setSearchKeyword] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("");
+  const { data: products, isLoading, isError } = useGetProductsQuery(); // This replaces the useEffect call for fetching products
 
+  console.log(products);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("");
+  const [searchLoading, setSearchLoading] = useState(false);
 
+  // Handle adding to cart
   const addToCartHandler = (product, qty) => {
     dispatch(addToCart({ ...product, qty: parseInt(qty) }));
   };
-
-  useEffect(() => {
-    fetch("https://fakestoreapi.com/products")
-      .then((response) => response.json())
-      .then((data) => {
-        setProducts(data);
-        setFilteredProducts(data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("There was an error fetching the products:", error);
-        setLoading(false);
-      });
-  }, []);
 
   const handleFilter = () => {
     setSearchLoading(true); // start the search loading spinner
@@ -113,7 +102,16 @@ function ProductScreen() {
     setSearchLoading(false); // end the search loading spinner
   };
 
-  if (loading) {
+  // // Handle filtering of products
+  useEffect(() => {
+    if (products) {
+      let filtered = products;
+
+      setFilteredProducts(filtered);
+    }
+  }, [products]);
+
+  if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <Loader />
@@ -121,53 +119,64 @@ function ProductScreen() {
     );
   }
 
-  return (
-    <div className="p-4">
-      <div className="mb-4 flex justify-between gap-4">
-        <TextField
-          label="Search products"
-          variant="outlined"
-          value={searchKeyword}
-          onChange={(e) => setSearchKeyword(e.target.value)}
-          style={{ flex: 2 }}
-        />
-        <FormControl variant="outlined" className="ml-2" style={{ flex: 1 }}>
-          <InputLabel id="category-label">Category</InputLabel>
-          <Select
-            labelId="category-label"
-            value={categoryFilter}
-            onChange={(e) => setCategoryFilter(e.target.value)}
-            label="Category"
-          >
-            <MenuItem value="">
-              <em>All Categories</em>
-            </MenuItem>
-            <MenuItem value="electronics">Electronics</MenuItem>
-            <MenuItem value="clothing">Clothing</MenuItem>
-          </Select>
-        </FormControl>
-        <Button variant="contained" color="primary" onClick={handleFilter}>
-          Go
-        </Button>
+  if (isError) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <h1>Error fetching products!</h1>
       </div>
+    );
+  }
 
-      {searchLoading ? (
-        <div className="flex justify-center items-center my-4">
-          <Loader />
+  return (
+    <>
+      <div className="p-4">
+        <div className="mb-4 flex justify-between gap-4">
+          <TextField
+            label="Search products"
+            variant="outlined"
+            value={searchKeyword}
+            onChange={(e) => setSearchKeyword(e.target.value)}
+            style={{ flex: 2 }}
+          />
+          <FormControl variant="outlined" className="ml-2" style={{ flex: 1 }}>
+            <InputLabel id="category-label">Category</InputLabel>
+            <Select
+              labelId="category-label"
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value)}
+              label="Category"
+            >
+              <MenuItem value="">
+                <em>All Categories</em>
+              </MenuItem>
+              <MenuItem value="men">Men's Wear</MenuItem>
+              <MenuItem value="women">Women's Wear</MenuItem>
+              <MenuItem value="kids">Kid's Wear</MenuItem>
+            </Select>
+          </FormControl>
+          <Button variant="contained" color="primary" onClick={handleFilter}>
+            Go
+          </Button>
         </div>
-      ) : filteredProducts.length === 0 ? (
-        <Snackbar
-          open={true}
-          message="No products found!"
-          autoHideDuration={3000}
-        />
-      ) : (
-        <ProductGrid
-          products={filteredProducts}
-          addToCartHandler={addToCartHandler}
-        />
-      )}
-    </div>
+
+        {searchLoading ? (
+          <div className="flex justify-center items-center my-4">
+            <Loader />
+          </div>
+        ) : filteredProducts.length === 0 ? (
+          <Snackbar
+            open={true}
+            message="No products found!"
+            autoHideDuration={3000}
+          />
+        ) : (
+          <ProductGrid
+            products={filteredProducts}
+            addToCartHandler={addToCartHandler}
+          />
+        )}
+      </div>
+    </>
   );
 }
 
