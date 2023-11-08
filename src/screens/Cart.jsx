@@ -88,7 +88,9 @@ export default function Cart() {
                           </a>
                         </h4>
                         <div className="flex items-center">
-                          <p className="text-sm font-medium">{item.price}</p>
+                          <p className="text-sm font-medium">
+                            {Number(item.price)}
+                          </p>
                           <p className="ml-4 text-sm text-gray-500">
                             {item.color}
                           </p>

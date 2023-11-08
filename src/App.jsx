@@ -44,14 +44,11 @@ const App = () => {
         <Route element={<Layout />}>
           <Route index path="/" element={<HomeScreen />} />
           <Route path="/products" element={<ProductScreen />} />
-
+          <Route path="/customer-service" element={<CustomerServiceScreen />} />
           <Route element={<PrivateRoute />}>
             <Route path="/cart" element={<Cart />} />
             <Route path="/profile" element={<CustomerProfileScreen />} />
-            <Route
-              path="/customer-service"
-              element={<CustomerServiceScreen />}
-            />
+
             <Route path="/shipping" element={<ShippingScreen />} />
             <Route path="/payment" element={<PaymentScreen />} />
             <Route path="/placeorder" element={<PlaceOrderScreen />} />

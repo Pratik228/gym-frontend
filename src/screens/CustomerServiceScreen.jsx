@@ -1,131 +1,133 @@
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import {
-	TextField,
-	Button,
-	Dialog,
-	DialogTitle,
-	DialogContent,
-	DialogActions,
-	Snackbar,
+  TextField,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Snackbar,
 } from "@mui/material";
 import { List, ListItem, ListItemText } from "@mui/material";
 
+import axios from "axios";
+
 function CustomerServiceScreen() {
-	const [open, setOpen] = useState(false); // State to control the dialog/modal
-	const [snackbarOpen, setSnackbarOpen] = useState(false); // State to control snackbar
-	const [formData, setFormData] = useState({
-		name: "",
-		email: "",
-		message: "",
-	});
+  const { userInfo } = useSelector((state) => state.auth);
 
-	const handleOpen = () => setOpen(true);
-	const handleClose = () => setOpen(false);
+  console.log(userInfo);
+  const [open, setOpen] = useState(false); // For controlling the dialog/modal
+  const [snackbarOpen, setSnackbarOpen] = useState(false); // For controlling snackbar
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
 
-	const handleChange = (event) => {
-		const { name, value } = event.target;
-		setFormData((prevState) => ({ ...prevState, [name]: value }));
-	};
+  // Open the dialog
+  const handleOpen = () => setOpen(true);
 
-	const handleSubmit = () => {
-		// Simulate ticket generation (In a real app, integrate with backend)
-		console.log("Ticket Generated:", formData);
+  // Close the dialog
+  const handleClose = () => setOpen(false);
 
-		handleClose();
-		setSnackbarOpen(true);
-	};
+  // Close the snackbar
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setSnackbarOpen(false);
+  };
 
-	return (
-		<div className="p-4">
-			<div className="flex flex-row justify-between p-5">
-				<h2 className="text-2xl mb-4">Your Orders</h2>
-				<div>
-					<p>Customer Service Email: xyz@minimalaura.com</p>
-					<p>Customer Service Contact : +91 xxxx xxxxx </p>
-				</div>
-			</div>
+  // Handle form field changes
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prevState) => ({ ...prevState, [name]: value }));
+  };
 
-			{/* List of Orders (for demo, using a static list) */}
-			<List>
-				<ListItem
-					button
-					onClick={handleOpen}>
-					<ListItemText primary="Order #12345" />
-				</ListItem>
-				{/* <ListItem
-					button
-					onClick={handleOpen}>
-					<ListItemText primary="Order #12345" />
-				</ListItem>
-				<ListItem
-					button
-					onClick={handleOpen}>
-					<ListItemText primary="Order #12345" />
-				</ListItem>
-				<ListItem
-					button
-					onClick={handleOpen}>
-					<ListItemText primary="Order #12345" />
-				</ListItem> */}
-				{/* ... add more list items for other orders */}
-			</List>
+  // Handle form submission
+  const handleSubmit = async () => {
+    // Simulate sending an API request to raise an issue
+    try {
+      // Replace with your API endpoint
+      const response = await axios.post(
+        "http://localhost:5000/api/support/issue",
+        formData
+      );
+      console.log(response.data);
+      setSnackbarOpen(true);
+    } catch (error) {
+      console.error("Error when sending the issue:", error);
+    }
+    handleClose();
+  };
 
-			{/* Dialog/Modal for Order Issue Form */}
-			<Dialog
-				open={open}
-				onClose={handleClose}>
-				<DialogTitle>Describe your issue</DialogTitle>
-				<DialogContent>
-					<TextField
-						fullWidth
-						margin="dense"
-						label="Name"
-						name="name"
-						onChange={handleChange}
-						value={formData.name}
-					/>
-					<TextField
-						fullWidth
-						margin="dense"
-						label="Email"
-						name="email"
-						onChange={handleChange}
-						value={formData.email}
-					/>
-					<TextField
-						fullWidth
-						margin="dense"
-						label="Message"
-						name="message"
-						onChange={handleChange}
-						value={formData.message}
-						multiline
-						rows={4}
-					/>
-				</DialogContent>
-				<DialogActions>
-					<Button
-						onClick={handleClose}
-						color="primary">
-						Cancel
-					</Button>
-					<Button
-						onClick={handleSubmit}
-						color="primary">
-						Submit
-					</Button>
-				</DialogActions>
-			</Dialog>
+  return (
+    <div className="p-4">
+      <div className="flex flex-row justify-between p-5">
+        <h2 className="text-2xl mb-4">Customer Service</h2>
+        <Button variant="outlined" onClick={handleOpen}>
+          Reach Out via Email
+        </Button>
+      </div>
 
-			{/* Snackbar for successful ticket generation */}
-			<Snackbar
-				open={snackbarOpen}
-				onClose={() => setSnackbarOpen(false)}
-				message="Ticket generated successfully!"
-				autoHideDuration={3000}
-			/>
-		</div>
-	);
+      <div className="p-5">
+        <p>Customer Service Email: hello@minimal.io</p>
+        <p>Customer Service Contact: +US xxxx xxxxx </p>
+      </div>
+
+      {/* Dialog/Modal for raising an issue */}
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>Describe your issue</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Name"
+            name="name"
+            fullWidth
+            variant="outlined"
+            onChange={handleChange}
+            value={userInfo?.name}
+          />
+          <TextField
+            margin="dense"
+            label="Email"
+            name="email"
+            fullWidth
+            variant="outlined"
+            onChange={handleChange}
+            value={userInfo?.email}
+          />
+          <TextField
+            margin="dense"
+            label="Message"
+            name="message"
+            fullWidth
+            variant="outlined"
+            multiline
+            rows={4}
+            onChange={handleChange}
+            value={formData.message}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={handleSubmit} variant="contained">
+            Submit
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Snackbar notification */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        message="Issue has been raised. Our customer support will reach out to you as soon as possible."
+      />
+    </div>
+  );
 }
 
 export default CustomerServiceScreen;

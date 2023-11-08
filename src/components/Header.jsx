@@ -9,6 +9,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import LogoutIcon from "@mui/icons-material/ExitToApp";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 
 /* Refactor Later
  */
@@ -94,18 +95,17 @@ const Header = () => {
             <ShoppingCartIcon className="hover:text-indigo-500 cursor-pointer" />
           </NavLink>
 
-          {userInfo && (
-            <NavLink
-              to="/customer-service"
-              className={({ isActive }) =>
-                isActive
-                  ? "text-indigo-400 hover:text-indigo-500"
-                  : "hover:text-indigo-500"
-              }
-            >
-              <span className="mr-2">Service</span>
-            </NavLink>
-          )}
+          <NavLink
+            to="/customer-service"
+            className={({ isActive }) =>
+              isActive
+                ? "text-indigo-400 hover:text-indigo-500"
+                : "hover:text-indigo-500"
+            }
+          >
+            <SupportAgentIcon className="hover:text-indigo-500 mr-2  cursor-pointer" />
+            <span className="mr-2">Service</span>
+          </NavLink>
 
           {userInfo ? (
             <>
