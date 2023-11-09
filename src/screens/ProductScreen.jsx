@@ -11,7 +11,7 @@ import {
 	MenuItem,
 	Snackbar,
 } from "@mui/material";
-import { toast, ToastContainerFF } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import ShoppingCart from "@mui/icons-material/ShoppingCart";
 import "react-toastify/dist/ReactToastify.css";
 

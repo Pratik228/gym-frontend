@@ -95,7 +95,7 @@ const Header = () => {
 								? "text-indigo-400 hover:text-indigo-500"
 								: "hover:text-indigo-500"
 						}>
-						<span className="mr-2"> Cart {itemCount()}</span>
+						<span className="mr-2"> Cart {itemCount() ? itemCount() : ""}</span>
 						<ShoppingCartIcon className="hover:text-indigo-500 cursor-pointer" />
 					</NavLink>
 
