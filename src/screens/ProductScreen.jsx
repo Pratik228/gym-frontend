@@ -13,7 +13,6 @@ import {
 } from "@mui/material";
 import { toast, ToastContainer } from "react-toastify";
 import ShoppingCart from "@mui/icons-material/ShoppingCart";
-import "react-toastify/dist/ReactToastify.css";
 
 import { addToCart } from "../slices/cartSlice";
 import { useGetProductsQuery } from "../slices/productsApiSlice";

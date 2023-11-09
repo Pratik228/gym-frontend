@@ -7,9 +7,9 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  Snackbar,
 } from "@mui/material";
-import { List, ListItem, ListItemText } from "@mui/material";
+
+import { toast, ToastContainer } from "react-toastify";
 
 import axios from "axios";
 
@@ -18,26 +18,16 @@ function CustomerServiceScreen() {
 
   console.log(userInfo);
   const [open, setOpen] = useState(false); // For controlling the dialog/modal
-  const [snackbarOpen, setSnackbarOpen] = useState(false); // For controlling snackbar
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     message: "",
   });
-
   // Open the dialog
   const handleOpen = () => setOpen(true);
 
   // Close the dialog
   const handleClose = () => setOpen(false);
-
-  // Close the snackbar
-  const handleSnackbarClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setSnackbarOpen(false);
-  };
 
   // Handle form field changes
   const handleChange = (event) => {
@@ -49,17 +39,17 @@ function CustomerServiceScreen() {
   const handleSubmit = async () => {
     // Simulate sending an API request to raise an issue
     try {
-      // Replace with your API endpoint
+      handleClose();
+
+      toast.success("Issue has been raised :)");
       const response = await axios.post(
         "http://localhost:5000/api/support/issue",
         formData
       );
-      console.log(response.data);
-      setSnackbarOpen(true);
     } catch (error) {
       console.error("Error when sending the issue:", error);
+      toast.error("Somethin went wrong. Please try again.");
     }
-    handleClose();
   };
 
   return (
@@ -118,14 +108,7 @@ function CustomerServiceScreen() {
           </Button>
         </DialogActions>
       </Dialog>
-
-      {/* Snackbar notification */}
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={6000}
-        onClose={handleSnackbarClose}
-        message="Issue has been raised. Our customer support will reach out to you as soon as possible."
-      />
+      <ToastContainer />
     </div>
   );
 }
