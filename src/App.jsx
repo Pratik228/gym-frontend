@@ -22,8 +22,10 @@ import PaymentScreen from "./screens/PaymentScreen";
 import PlaceOrderScreen from "./screens/PlaceOrderScreen";
 import OrderScreen from "./screens/OrderScreen";
 import PrivateRoute from "./components/PrivateRoute";
+import UpdatePassword from "./screens/UpdatePasswordScreen";
 
 import Cart from "./screens/Cart";
+import { useEffect } from "react";
 
 const darkTheme = createTheme({
   palette: {
@@ -36,10 +38,10 @@ const App = () => {
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
       <ToastContainer />
-
       <Routes>
         <Route path="/login" element={<LoginScreen />} />
         <Route path="/register" element={<RegisterScreen />} />
+        <Route path="/update-password" element={<UpdatePassword />} />
 
         <Route element={<Layout />}>
           <Route index path="/" element={<HomeScreen />} />
