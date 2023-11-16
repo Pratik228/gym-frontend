@@ -100,10 +100,16 @@ const Header = () => {
                 : "hover:text-indigo-500"
             }
           >
-            <span className="mr-2"> Cart {itemCount() ? itemCount() : ""}</span>
-            <ShoppingCartIcon className="hover:text-indigo-500 cursor-pointer" />
+            <div className="relative inline-flex items-center">
+              <ShoppingCartIcon className="hover:text-indigo-500 cursor-pointer" />
+              {itemCount() > 0 && (
+                <span className="absolute -top-4 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  {itemCount()}
+                </span>
+              )}
+              <span className="ml-2">Cart</span>
+            </div>
           </NavLink>
-
           <NavLink
             to="/customer-service"
             className={({ isActive }) =>
