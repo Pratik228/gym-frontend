@@ -28,10 +28,13 @@ const LoginScreen = () => {
 
   const { search } = useLocation();
   const sp = new URLSearchParams(search);
-  const redirect = sp.get("redirect") || "/update-password";
+  const redirect = sp.get("redirect") || "/";
 
   useEffect(() => {
-    if (userInfo) {
+    if (userInfo && userInfo.is_verified === 0) {
+      console.log("I am Here");
+      navigate("/update-password");
+    } else if (userInfo) {
       navigate(redirect);
     }
   }, [navigate, redirect, userInfo]);
@@ -77,7 +80,7 @@ const LoginScreen = () => {
       dispatch(setCredentials({ ...res }));
       console.log("Login Successful");
       toast.success("Login Successful");
-      navigate(redirect);
+      navigate("/");
     } catch (err) {
       console.log(err);
       setServerError(err?.data?.message || "An error occurred during login.");
@@ -109,7 +112,7 @@ const LoginScreen = () => {
           </p>
         </div>
 
-        <div className="mt-8 sm:mx-auto w-1/4 h-full">
+        <div className="mt-8 sm:mx-auto h-full">
           <div className="bg-gray-800 p-16 shadow rounded-lg h-full">
             <form className="space-y-8" onSubmit={submitHandler}>
               {serverError && (
@@ -161,7 +164,7 @@ const LoginScreen = () => {
                 )}
               </div>
 
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center justify-between mb-4 gap-4">
                 <div className="flex items-center">
                   <input
                     id="remember-me"

@@ -11,61 +11,68 @@ import {
   MenuItem,
   Snackbar,
 } from "@mui/material";
-import { toast, ToastContainer } from "react-toastify";
 import ShoppingCart from "@mui/icons-material/ShoppingCart";
 
 import { addToCart } from "../slices/cartSlice";
 import { useGetProductsQuery } from "../slices/productsApiSlice";
+import { showSnackbar } from "../slices/snackbarSlice";
 
-const ProductGrid = ({ products, addToCartHandler }) => (
-  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-    {products.map((product) => (
-      <div
-        key={product.id}
-        className="flex flex-col h-full p-4 shadow-sm bg-[#1e293b] rounded"
-      >
-        <img
-          src={product.image}
-          alt={product.name}
-          className="flex-grow object-cover h-48 mb-4"
-        />
-        <div className="flex-grow p-2">
-          <h2 className="text-lg mb-2">{product.brand}</h2>
-          <h2 className="text-lg mb-2">{product.name}</h2>
-          <p className="text-md mb-2">${Number(product.price)}</p>
-          <p className="text-sm leading-5 mb-4">{product.description}</p>
-        </div>
-        <div className="flex justify-end items-center gap-2">
-          {/* items-center to vertically align the input and button */}
-          <TextField
-            type="number"
-            InputProps={{ inputProps: { min: 1 } }}
-            defaultValue="1"
-            variant="outlined"
-            size="small"
-            className="mr-4" // Increase margin for more spacing
-            id={`qty-${product.id}`}
+function ProductGrid({ products, addToCartHandler }) {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2">
+      {products.map((product) => (
+        <div
+          key={product.id}
+          className="flex flex-col h-full p-3 shadow-sm bg-[#1e293b] rounded" // Reduced padding
+        >
+          <img
+            src={product.image}
+            alt={product.name}
+            className="flex-grow object-contain h-48 mb-2" // Reduced margin below image
           />
-          <Button
-            startIcon={<ShoppingCart />} // Add the shopping cart icon to the button
-            onClick={() => {
-              addToCartHandler(
-                product,
-                document.getElementById(`qty-${product.id}`).value
-              );
-              toast.success("Added items to cart successfully");
-            }}
-            variant="contained" // For filled button style
-            color="primary" // Primary theme color
-            size="medium" // Larger button size
-          >
-            Add to Cart
-          </Button>
+          <div className="flex-grow p-1">
+            {" "}
+            {/* Reduced padding */}
+            <p className="text-xl mb-1">{product.brand}</p>{" "}
+            {/* Reduced text size and margin */}
+            <p className="text-md mb-1">{product.name}</p>{" "}
+            {/* Reduced text size and margin */}
+            <p className="text-sm mb-1">${Number(product.price)}</p>{" "}
+            {/* Reduced text size and margin */}
+            <p className="text-xs leading-4 mb-2">{product.description}</p>{" "}
+            {/* Reduced text size and leading */}
+          </div>
+          <div className="flex justify-end items-center gap-1 w-full">
+            <TextField
+              type="number"
+              InputProps={{ inputProps: { min: 1 } }}
+              defaultValue="1"
+              variant="outlined"
+              size="small"
+              className="w-16" // Set a fixed width for the TextField
+              id={`qty-${product.id}`}
+            />
+            <Button
+              startIcon={<ShoppingCart fontSize="small" />}
+              onClick={() => {
+                addToCartHandler(
+                  product,
+                  document.getElementById(`qty-${product.id}`).value
+                );
+              }}
+              variant="contained"
+              color="primary"
+              size="small"
+              className="flex-grow p-2" // Button will take up remaining space
+            >
+              <p className="text-xs">Add to Cart</p>
+            </Button>
+          </div>
         </div>
-      </div>
-    ))}
-  </div>
-);
+      ))}
+    </div>
+  );
+}
 
 function ProductScreen() {
   const { data: products, isLoading, isError } = useGetProductsQuery(); // This replaces the useEffect call for fetching products
@@ -81,6 +88,12 @@ function ProductScreen() {
   // Handle adding to cart
   const addToCartHandler = (product, qty) => {
     dispatch(addToCart({ ...product, qty: parseInt(qty) }));
+    dispatch(
+      showSnackbar({
+        message: "Added items to cart successfully",
+        severity: "success",
+      })
+    );
   };
 
   const handleFilter = () => {

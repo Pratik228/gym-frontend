@@ -20,7 +20,7 @@ function CustomerServiceScreen() {
   const [open, setOpen] = useState(false); // For controlling the dialog/modal
   const [formData, setFormData] = useState({
     name: "",
-    email: "",
+    email: userInfo?.email,
     message: "",
   });
   // Open the dialog

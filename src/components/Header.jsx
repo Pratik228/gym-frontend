@@ -4,6 +4,7 @@ import { useLogoutMutation } from "../slices/usersApiSlice";
 import { logout } from "../slices/authSlice";
 import { resetCart } from "../slices/cartSlice";
 import { showSnackbar } from "../slices/snackbarSlice";
+import { Badge } from "@mui/material";
 
 import SearchIcon from "@mui/icons-material/Search";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
@@ -100,13 +101,14 @@ const Header = () => {
                 : "hover:text-indigo-500"
             }
           >
-            <div className="relative inline-flex items-center">
-              <ShoppingCartIcon className="hover:text-indigo-500 cursor-pointer" />
-              {itemCount() > 0 && (
-                <span className="absolute -top-4 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                  {itemCount()}
-                </span>
-              )}
+            <div className="flex items-center space-x-3">
+              <Badge
+                badgeContent={itemCount()}
+                color="primary"
+                overlap="circular"
+              >
+                <ShoppingCartIcon className="hover:text-indigo-500 cursor-pointer" />
+              </Badge>
               <span className="ml-2">Cart</span>
             </div>
           </NavLink>
