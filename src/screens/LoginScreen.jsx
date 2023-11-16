@@ -89,19 +89,6 @@ const LoginScreen = () => {
   return (
     <>
       <div className="flex min-h-screen flex-col justify-center py-12 sm:px-6 lg:px-8 bg-gray-900">
-        <Snackbar
-          open={snackbar.show}
-          autoHideDuration={6000}
-          onClose={() => dispatch(hideSnackbar())}
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        >
-          <Alert
-            onClose={() => dispatch(hideSnackbar())}
-            severity={snackbar.severity}
-          >
-            {snackbar.message}
-          </Alert>
-        </Snackbar>
         <div className="sm:mx-auto sm:w-2/5">
           <img
             className="mx-auto w-48"

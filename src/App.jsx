@@ -1,8 +1,10 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, redirect } from "react-router-dom";
 
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { ToastContainer } from "react-bootstrap";
+import { Snackbar, Alert } from "@mui/material";
+import { hideSnackbar, showSnackbar } from "./slices/snackbarSlice";
 
 import CustomerServiceScreen from "./screens/CustomerServiceScreen";
 import Layout from "./components/Layout";
@@ -23,6 +25,7 @@ import PlaceOrderScreen from "./screens/PlaceOrderScreen";
 import OrderScreen from "./screens/OrderScreen";
 import PrivateRoute from "./components/PrivateRoute";
 import UpdatePassword from "./screens/UpdatePasswordScreen";
+import { useDispatch, useSelector } from "react-redux";
 
 import Cart from "./screens/Cart";
 import { useEffect } from "react";
@@ -34,9 +37,38 @@ const darkTheme = createTheme({
 });
 
 const App = () => {
+  const { userInfo } = useSelector((state) => state.auth);
+  const snackbar = useSelector((state) => state.snackbar);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (userInfo && userInfo.is_verified === 0) {
+      // dispatch(
+      //   showSnackbar({
+      //     message: "Please update your password first.",
+      //     severity: "notice",
+      //   })
+      // );
+      redirect("/update-password");
+    }
+  }, [userInfo]);
+
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
+      <Snackbar
+        open={snackbar.show}
+        autoHideDuration={6000}
+        onClose={() => dispatch(hideSnackbar())}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={() => dispatch(hideSnackbar())}
+          severity={snackbar.severity}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
       <ToastContainer />
       <Routes>
         <Route path="/login" element={<LoginScreen />} />

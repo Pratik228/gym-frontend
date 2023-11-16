@@ -28,7 +28,6 @@ const Header = () => {
       await logoutApiCall().unwrap();
       dispatch(logout());
       dispatch(resetCart());
-      toast("Logged out successfully!", { type: "success" });
       dispatch(
         showSnackbar({
           message: "Logged out successfully!",
