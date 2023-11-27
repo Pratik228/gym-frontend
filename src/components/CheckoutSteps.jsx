@@ -1,50 +1,34 @@
-import React from 'react';
-import { Nav } from 'react-bootstrap';
-import { LinkContainer } from 'react-router-bootstrap';
+import React from "react";
+import { Link } from "react-router-dom";
 
-const CheckoutSteps = ({ step1, step2, step3, step4 }) => {
+const CheckoutStep = ({ step, link, enabled, title }) => {
   return (
-    <Nav className='justify-content-center mb-4'>
-      <Nav.Item>
-        {step1 ? (
-          <LinkContainer to='/login'>
-            <Nav.Link>Sign In</Nav.Link>
-          </LinkContainer>
-        ) : (
-          <Nav.Link disabled>Sign In</Nav.Link>
-        )}
-      </Nav.Item>
+    <div className="flex flex-col items-center">
+      <div className="text-xs mb-1">{title}</div>
+      {enabled ? (
+        <Link to={link}>
+          <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center text-sm justify-center text-white">
+            {step}
+          </div>
+        </Link>
+      ) : (
+        <div className="h-8 w-8 rounded-full bg-gray-300 flex items-center text-sm justify-center text-gray-700">
+          {step}
+        </div>
+      )}
+    </div>
+  );
+};
 
-      <Nav.Item>
-        {step2 ? (
-          <LinkContainer to='/shipping'>
-            <Nav.Link>Shipping</Nav.Link>
-          </LinkContainer>
-        ) : (
-          <Nav.Link disabled>Shipping</Nav.Link>
-        )}
-      </Nav.Item>
-
-      <Nav.Item>
-        {step3 ? (
-          <LinkContainer to='/payment'>
-            <Nav.Link>Payment</Nav.Link>
-          </LinkContainer>
-        ) : (
-          <Nav.Link disabled>Payment</Nav.Link>
-        )}
-      </Nav.Item>
-
-      <Nav.Item>
-        {step4 ? (
-          <LinkContainer to='/placeorder'>
-            <Nav.Link>Place Order</Nav.Link>
-          </LinkContainer>
-        ) : (
-          <Nav.Link disabled>Place Order</Nav.Link>
-        )}
-      </Nav.Item>
-    </Nav>
+const CheckoutSteps = ({ step1, step2, step3 }) => {
+  return (
+    <div className="flex justify-center items-center mb-4">
+      <CheckoutStep step={1} link="/cart" enabled={step1} title="Cart" />
+      <div className="flex-auto border-t border-dashed border-gray-300"></div>
+      <CheckoutStep step={2} link="/shipping" enabled={step2} title="Address" />
+      <div className="flex-auto border-t border-dashed border-gray-300"></div>
+      <CheckoutStep step={3} link="/payment" enabled={step3} title="Payment" />
+    </div>
   );
 };
 

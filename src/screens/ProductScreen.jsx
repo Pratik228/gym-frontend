@@ -102,7 +102,7 @@ function ProductScreen() {
 
     if (searchKeyword) {
       filtered = filtered.filter((product) =>
-        product.title.toLowerCase().includes(searchKeyword.toLowerCase())
+        product.name.toLowerCase().includes(searchKeyword.toLowerCase())
       );
     }
 
