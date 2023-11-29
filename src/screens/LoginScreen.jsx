@@ -77,6 +77,8 @@ const LoginScreen = () => {
     }
     try {
       const res = await login({ email, password }).unwrap();
+
+      console.log("Auth Response", res);
       dispatch(setCredentials({ ...res }));
       console.log("Login Successful");
       toast.success("Login Successful");

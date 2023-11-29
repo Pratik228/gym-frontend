@@ -5,8 +5,11 @@ module.exports = {
     extend: {},
   },
   plugins: [
-         require("@tailwindcss/forms"),
-         require("tw-elements/dist/plugin"),
-         require('@tailwindcss/aspect-ratio')
+    require("@tailwindcss/forms"),
+    require("tw-elements/dist/plugin"),
+    require("@tailwindcss/aspect-ratio"),
   ],
+  variants: {
+    display: ["group-hover"],
+  },
 };

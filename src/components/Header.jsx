@@ -24,11 +24,7 @@ const Header = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [anchorEl, setAnchorEl] = useState(null);
-  const isMenuOpen = Boolean(anchorEl);
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
-  };
+
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const [logoutApiCall] = useLogoutMutation();
@@ -56,15 +52,6 @@ const Header = () => {
       count += item.qty;
     });
     return count;
-  };
-  const handleMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-    // isMenuOpen = false;
-    console.log(isMenuOpen);
   };
 
   return (
@@ -141,30 +128,42 @@ const Header = () => {
             <SupportAgentIcon className="hover:text-indigo-500 mr-2  cursor-pointer" />
             <span className="mr-2">Service</span>
           </NavLink>
-
           {userInfo ? (
             <>
-              <div
-                onClick={handleMenuOpen}
-                className="flex items-center space-x-2"
-              >
-                <AccountCircleIcon className="hover:text-indigo-500 cursor-pointer" />
-                {/* <div className="hover:text-indigo-500 cursor-pointer">
-									
-								</div> */}
-
-                <Menu
-                  anchorEl={anchorEl}
-                  open={isMenuOpen}
-                  onClose={handleMenuClose}
-                >
-                  <NavLink to="/my-orders">
-                    <MenuItem onClick={handleMenuClose}>Orders</MenuItem>
-                  </NavLink>
-
-                  <MenuItem onClick={handleMenuClose}>{userInfo.name}</MenuItem>
-                  <MenuItem onClick={handleMenuClose}></MenuItem>
-                </Menu>
+              <div className="relative group">
+                <div className="flex items-center cursor-pointer">
+                  <AccountCircleIcon className="text-white" />
+                  <span className="text-white ml-2">{userInfo.name}</span>
+                </div>
+                <div className="absolute group-hover:block dropdown-menu hidden right-0 w-36 bg-gray-700 rounded-md shadow-xl z-20 transition-opacity duration-300 ease-in-out group-hover:opacity-100">
+                  <ul className="py-2">
+                    <li>
+                      <NavLink
+                        to="/profile"
+                        className="block px-4 py-2 hover:bg-gray-800 text-white"
+                      >
+                        My Profile
+                      </NavLink>
+                    </li>
+                    <li>
+                      <NavLink
+                        to="/my-orders"
+                        className="block px-4 py-2 hover:bg-gray-800 text-white"
+                      >
+                        My Orders
+                      </NavLink>
+                    </li>
+                    <li className="py-1">
+                      <hr className="border-t border-gray-600" />
+                      <span
+                        onClick={logoutHandler}
+                        className="block px-4 py-2 hover:bg-gray-800 text-white cursor-pointer"
+                      >
+                        Logout
+                      </span>
+                    </li>
+                  </ul>
+                </div>
               </div>
             </>
           ) : (

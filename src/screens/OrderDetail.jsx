@@ -17,8 +17,6 @@ const OrderDetail = () => {
 
   const { data: order, isLoading, isError } = useGetOrderDetailsQuery(id);
 
-  console.log(order);
-
   if (isLoading) return <Loader />;
   if (isError || !order) return <div>Error fetching order details.</div>;
 
@@ -41,10 +39,20 @@ const OrderDetail = () => {
               <p className="text-gray-300">
                 <strong>Address:</strong> {order.shippingAddress}
               </p>
-              {order.isShipped && <AccessTime />} {/* Shipped */}
-              {order.isInTransit && <LocalShippingOutlined />}{" "}
-              {/* In Transit */}
-              {order.isDelivered && <DoneAllOutlined />} {/* Delivered */}
+            </div>
+
+            {/* Order Status */}
+            <div className="mb-4">
+              <h3 className="text-lg font-semibold text-white mb-2 flex items-center">
+                <DoneAllOutlined className="mr-2" />
+                Order Status
+              </h3>
+              <p className="text-gray-300">
+                <strong>Status: </strong>
+                <span className="text-yellow-400">
+                  {order.isDelivered ? "Delivered" : "Not Delivered"}
+                </span>
+              </p>
             </div>
 
             {/* Payment Method */}
