@@ -19,161 +19,170 @@ import { toast } from "react-toastify";
 /* Refactor Later
  */
 const Header = () => {
-	const { cartItems } = useSelector((state) => state.cart);
-	const { userInfo } = useSelector((state) => state.auth);
+  const { cartItems } = useSelector((state) => state.cart);
+  const { userInfo } = useSelector((state) => state.auth);
 
-	const dispatch = useDispatch();
-	const navigate = useNavigate();
-	const [anchorEl, setAnchorEl] = useState(null);
-	const isMenuOpen = Boolean(anchorEl);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [anchorEl, setAnchorEl] = useState(null);
+  const isMenuOpen = Boolean(anchorEl);
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-	const [logoutApiCall] = useLogoutMutation();
+  const [logoutApiCall] = useLogoutMutation();
 
-	const logoutHandler = async () => {
-		try {
-			await logoutApiCall().unwrap();
-			dispatch(logout());
-			dispatch(resetCart());
-			dispatch(
-				showSnackbar({
-					message: "Logged out successfully!",
-					severity: "success",
-				})
-			);
-			navigate("/login");
-		} catch (err) {
-			console.error(err);
-		}
-	};
+  const logoutHandler = async () => {
+    try {
+      await logoutApiCall().unwrap();
+      dispatch(logout());
+      dispatch(resetCart());
+      dispatch(
+        showSnackbar({
+          message: "Logged out successfully!",
+          severity: "success",
+        })
+      );
+      navigate("/login");
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
-	const itemCount = () => {
-		let count = 0;
-		cartItems.map((item) => {
-			count += item.qty;
-		});
-		return count;
-	};
-	const handleMenuOpen = (event) => {
-		setAnchorEl(event.currentTarget);
-	};
+  const itemCount = () => {
+    let count = 0;
+    cartItems.map((item) => {
+      count += item.qty;
+    });
+    return count;
+  };
+  const handleMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
 
-	const handleMenuClose = () => {
-		setAnchorEl(null);
-		// isMenuOpen = false;
-		console.log(isMenuOpen);
-	};
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+    // isMenuOpen = false;
+    console.log(isMenuOpen);
+  };
 
-	return (
-		<div className="bg-gray-800 shadow-md mb-8">
-			<div className="container mx-auto flex items-center justify-between">
-				<div className="flex items-center">
-					<img
-						src="/img/Logo.png"
-						alt="MinimalAura Logo"
-						className="w-24 h-24"
-					/>
-					<div className="text-2xl font-semibold">MinimalAura</div>
-				</div>
-				<div className="flex space-x-6 items-center">
-					<NavLink
-						to="/"
-						className={({ isActive }) =>
-							isActive
-								? "text-indigo-400 hover:text-indigo-500"
-								: "hover:text-indigo-500"
-						}>
-						Home
-					</NavLink>
-					<NavLink
-						to="/products"
-						className={({ isActive }) =>
-							isActive
-								? "text-indigo-400 hover:text-indigo-500"
-								: "hover:text-indigo-500"
-						}>
-						Products
-					</NavLink>
-					{userInfo && (
-						<NavLink
-							to="/profile"
-							className={({ isActive }) =>
-								isActive
-									? "text-indigo-400 hover:text-indigo-500"
-									: "hover:text-indigo-500"
-							}>
-							Profile
-						</NavLink>
-					)}
-					<NavLink
-						to="/cart"
-						className={({ isActive }) =>
-							isActive
-								? "text-indigo-400 hover:text-indigo-500"
-								: "hover:text-indigo-500"
-						}>
-						<div className="flex items-center space-x-3">
-							<Badge
-								badgeContent={itemCount()}
-								color="primary"
-								overlap="circular">
-								<ShoppingCartIcon className="hover:text-indigo-500 cursor-pointer" />
-							</Badge>
-							<span className="ml-2">Cart</span>
-						</div>
-					</NavLink>
-					<NavLink
-						to="/customer-service"
-						className={({ isActive }) =>
-							isActive
-								? "text-indigo-400 hover:text-indigo-500"
-								: "hover:text-indigo-500"
-						}>
-						<SupportAgentIcon className="hover:text-indigo-500 mr-2  cursor-pointer" />
-						<span className="mr-2">Service</span>
-					</NavLink>
+  return (
+    <div className="bg-gray-800 shadow-md mb-8">
+      <div className="container mx-auto flex items-center justify-between">
+        <div className="flex items-center">
+          <img
+            src="/img/Logo.png"
+            alt="MinimalAura Logo"
+            className="w-24 h-24"
+          />
+          <div className="text-2xl font-semibold">MinimalAura</div>
+        </div>
+        <div className="flex space-x-6 items-center">
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
+              isActive
+                ? "text-indigo-400 hover:text-indigo-500"
+                : "hover:text-indigo-500"
+            }
+          >
+            Home
+          </NavLink>
+          <NavLink
+            to="/products"
+            className={({ isActive }) =>
+              isActive
+                ? "text-indigo-400 hover:text-indigo-500"
+                : "hover:text-indigo-500"
+            }
+          >
+            Products
+          </NavLink>
+          {userInfo && (
+            <NavLink
+              to="/profile"
+              className={({ isActive }) =>
+                isActive
+                  ? "text-indigo-400 hover:text-indigo-500"
+                  : "hover:text-indigo-500"
+              }
+            >
+              Profile
+            </NavLink>
+          )}
+          <NavLink
+            to="/cart"
+            className={({ isActive }) =>
+              isActive
+                ? "text-indigo-400 hover:text-indigo-500"
+                : "hover:text-indigo-500"
+            }
+          >
+            <div className="flex items-center space-x-3">
+              <Badge
+                badgeContent={itemCount()}
+                color="primary"
+                overlap="circular"
+              >
+                <ShoppingCartIcon className="hover:text-indigo-500 cursor-pointer" />
+              </Badge>
+              <span className="ml-2">Cart</span>
+            </div>
+          </NavLink>
+          <NavLink
+            to="/customer-service"
+            className={({ isActive }) =>
+              isActive
+                ? "text-indigo-400 hover:text-indigo-500"
+                : "hover:text-indigo-500"
+            }
+          >
+            <SupportAgentIcon className="hover:text-indigo-500 mr-2  cursor-pointer" />
+            <span className="mr-2">Service</span>
+          </NavLink>
 
-					{userInfo ? (
-						<>
-							<div
-								onClick={handleMenuOpen}
-								className="flex items-center space-x-2">
-								<AccountCircleIcon className="hover:text-indigo-500 cursor-pointer" />
-								<div className="hover:text-indigo-500 cursor-pointer">
-									{userInfo.name}
-								</div>
+          {userInfo ? (
+            <>
+              <div
+                onClick={handleMenuOpen}
+                className="flex items-center space-x-2"
+              >
+                <AccountCircleIcon className="hover:text-indigo-500 cursor-pointer" />
+                {/* <div className="hover:text-indigo-500 cursor-pointer">
+									
+								</div> */}
 
-								<Menu
-									anchorEl={anchorEl}
-									open={isMenuOpen}
-									onClose={handleMenuClose}>
-									<NavLink to="/my-orders">
-										<MenuItem onClick={handleMenuClose}>My Orders</MenuItem>
-									</NavLink>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={isMenuOpen}
+                  onClose={handleMenuClose}
+                >
+                  <NavLink to="/my-orders">
+                    <MenuItem onClick={handleMenuClose}>Orders</MenuItem>
+                  </NavLink>
 
-									<MenuItem onClick={handleMenuClose}>Track Order</MenuItem>
-								</Menu>
-							</div>
-
-							<LogoutIcon
-								className="hover:text-indigo-500 cursor-pointer"
-								onClick={logoutHandler}
-							/>
-						</>
-					) : (
-						<NavLink
-							to="/login"
-							className={({ isActive }) =>
-								isActive
-									? "text-indigo-400 hover:text-indigo-500"
-									: "hover:text-indigo-500"
-							}>
-							Login
-						</NavLink>
-					)}
-				</div>
-			</div>
-		</div>
-	);
+                  <MenuItem onClick={handleMenuClose}>{userInfo.name}</MenuItem>
+                  <MenuItem onClick={handleMenuClose}></MenuItem>
+                </Menu>
+              </div>
+            </>
+          ) : (
+            <NavLink
+              to="/login"
+              className={({ isActive }) =>
+                isActive
+                  ? "text-indigo-400 hover:text-indigo-500"
+                  : "hover:text-indigo-500"
+              }
+            >
+              Login
+            </NavLink>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default Header;
