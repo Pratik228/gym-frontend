@@ -28,7 +28,7 @@ import OrderScreen from "./screens/OrderScreen";
 import PrivateRoute from "./components/PrivateRoute";
 import UpdatePassword from "./screens/UpdatePasswordScreen";
 import { useDispatch, useSelector } from "react-redux";
-
+import Maintenance from "./screens/Maintenance";
 import Cart from "./screens/Cart";
 import { useEffect } from "react";
 import OrderDetail from "./screens/OrderDetail";
@@ -75,6 +75,10 @@ const App = () => {
 				<Route
 					path="/login"
 					element={<LoginScreen />}
+				/>
+				<Route
+					path="/maintenance"
+					element={<Maintenance />}
 				/>
 				<Route
 					path="/register"
