@@ -1,60 +1,55 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-// import { FaTimes, FaUpload } from "react-icons/fa";
 import { toast, ToastContainer } from "react-toastify";
-// import { useProfileMutation } from "../slices/usersApiSlice";
-// import { useGetMyOrdersQuery } from "../slices/ordersApiSlice";
-// import { setCredentials } from "../slices/authSlice";
-import { BASE_URL, USERS_URL } from "../constants";
 import AddressForm from "../components/AddressForm";
 const defaultProfilePic = "https://loremflickr.com/640/360"; // Path to your default image
 const CustomerProfileScreen = () => {
   const { userInfo } = useSelector((state) => state.auth);
   const [gender, setGender] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [country, setCountry] = useState("");
   const [photo, setPhoto] = useState(defaultProfilePic);
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [addresses, setAddresses] = useState([]);
-  const [newAddress, setNewAddress] = useState({
-    address: "",
-    city: "",
-    country: "",
-    state: "",
-    postalCode: "",
-    phone: "",
-  });
+
+  // Separate state for each address field
+  const [address, setAddress] = useState("");
+  const [city, setCity] = useState("");
+  const [country, setCountry] = useState("");
+  const [state, setState] = useState("");
+  const [postalCode, setPostalCode] = useState("");
+  const [phone, setPhone] = useState("");
+
+  // Load saved addresses from local storage
   useEffect(() => {
     const savedAddresses = localStorage.getItem("userAddresses");
-    console.log(savedAddresses);
     if (savedAddresses) {
       setAddresses(JSON.parse(savedAddresses));
     }
   }, []);
 
-  const saveAddress = () => {
-    const newAddress = {
-      address: "", // Fill these with actual data
-      city: "",
-      country: "",
-      state: "",
-      postalCode: "",
-      phone: "",
-    };
-    const updatedAddresses = [...addresses, newAddress];
-    setAddresses(updatedAddresses);
-    localStorage.setItem("userAddresses", JSON.stringify(updatedAddresses));
-    console.log(updatedAddresses);
-    setShowAddressModal(false);
-  };
-
   const handleAddAddress = () => {
     setShowAddressModal(true);
   };
 
-  const handleAddressChange = (field, value) => {
-    setNewAddress({ ...newAddress, [field]: value });
+  const saveAddress = () => {
+    if (address && city && postalCode) {
+      const newAddress = { address, city, country, state, postalCode, phone };
+      const updatedAddresses = [...addresses, newAddress];
+      setAddresses(updatedAddresses);
+      localStorage.setItem("userAddresses", JSON.stringify(updatedAddresses));
+      setShowAddressModal(false);
+      // Reset form fields
+      setAddress("");
+      setCity("");
+      setCountry("");
+      setState("");
+      setPostalCode("");
+      setPhone("");
+      toast.success("Address saved successfully.");
+    } else {
+      toast.error("Please fill in all required fields.");
+    }
   };
 
   const handleSaveAddress = (newAddress) => {
@@ -62,22 +57,6 @@ const CustomerProfileScreen = () => {
     setAddresses([...addresses, newAddress]);
     setShowAddressModal(false);
   };
-
-  // const { userInfo } = useSelector((state) => state.auth);
-  // const { data: orders, isLoading, error } = useGetMyOrdersQuery();
-  // const [updateProfile, { isLoading: loadingUpdateProfile }] =
-  //   useProfileMutation();
-
-  // useEffect(() => {
-  //   setName(userInfo.name);
-  //   setEmail(userInfo.email);
-  //   setGender(userInfo.gender || "");
-  //   setPhoneNumber(userInfo.phoneNumber || "");
-  //   setCountry(userInfo.country || "");
-  //   setPhoto(userInfo.photo || defaultProfilePic);
-  // }, [userInfo]);
-
-  // const dispatch = useDispatch();
 
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files[0]) {
@@ -87,29 +66,6 @@ const CustomerProfileScreen = () => {
       };
       reader.readAsDataURL(e.target.files[0]);
     }
-  };
-
-  const submitHandler = async (e) => {
-    // if (password !== confirmPassword) {
-    //   toast.error("Passwords do not match");
-    // } else {
-    //   try {
-    //     const res = await updateProfile({
-    //       _id: userInfo._id,
-    //       name,
-    //       email,
-    //       password,
-    //       gender,
-    //       phoneNumber,
-    //       country,
-    //       photo,
-    //     }).unwrap();
-    //     dispatch(setCredentials({ ...res }));
-    //     toast.success("Profile updated successfully");
-    //   } catch (err) {
-    //     toast.error(err?.data?.message || err.error);
-    //   }
-    // }
   };
 
   return (
@@ -127,7 +83,7 @@ const CustomerProfileScreen = () => {
           />
         </label>
 
-        <form onSubmit={submitHandler} className="mt-4 grid  gap-8">
+        <form className="mt-4 grid  gap-8">
           {/* Name */}
           <div>
             <label className="block text-lg font-medium text-white">
@@ -183,26 +139,22 @@ const CustomerProfileScreen = () => {
             <>
               <AddressForm
                 title="Add New Address"
-                address={newAddress.address}
-                setAddress={(value) => handleAddressChange("address", value)}
-                city={newAddress.city}
-                setCity={(value) => handleAddressChange("city", value)}
-                country={newAddress.country}
-                setCountry={(value) => handleAddressChange("country", value)}
-                state={newAddress.state}
-                setState={(value) => handleAddressChange("state", value)}
-                postalCode={newAddress.postalCode}
-                setPostalCode={(value) =>
-                  handleAddressChange("postalCode", value)
-                }
-                phone={newAddress.phone}
-                setPhone={(value) => handleAddressChange("phone", value)}
-                validation={null}
+                address={address}
+                setAddress={setAddress}
+                city={city}
+                setCity={setCity}
+                country={country}
+                setCountry={setCountry}
+                state={state}
+                setState={setState}
+                postalCode={postalCode}
+                setPostalCode={setPostalCode}
+                phone={phone}
+                setPhone={setPhone}
               />
-
               <button
                 onClick={saveAddress}
-                className="mt-4 text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                className="mt-2 text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
               >
                 Save Address
               </button>

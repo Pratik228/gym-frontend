@@ -21,12 +21,27 @@ const ShippingScreen = () => {
   const [validationErrors, setValidationErrors] = useState({});
   const validateForm = () => {
     const errors = {};
-    if (!address) errors.address = "Address is required";
-    if (!city) errors.city = "City is required";
-    if (!country) errors.country = "Country is required";
-    if (!state) errors.state = "State is required";
-    if (!postalCode) errors.postalCode = "Postal code is required";
-    if (!phone) errors.phone = "Phone number is required";
+    // Validations for shipping address
+    if (!address) errors.shippingAddress = "Shipping address is required";
+    if (!city) errors.shippingCity = "City is required";
+    if (!country) errors.shippingCountry = "Country is required";
+    if (!state) errors.shippingState = "State is required";
+    if (!postalCode) errors.shippingPostalCode = "Postal code is required";
+    if (!phone) errors.shippingPhone = "Phone number is required";
+
+    // Validations for billing address (only if different from shipping)
+    if (!sameAsShipping) {
+      if (!billingAddress.address)
+        errors.billingAddress = "Billing address is required";
+      if (!billingAddress.city) errors.billingCity = "City is required";
+      if (!billingAddress.country)
+        errors.billingCountry = "Country is required";
+      if (!billingAddress.state) errors.billingState = "State is required";
+      if (!billingAddress.postalCode)
+        errors.billingPostalCode = "Postal code is required";
+      if (!billingAddress.phone)
+        errors.billingPhone = "Phone number is required";
+    }
 
     return errors;
   };
@@ -93,13 +108,7 @@ const ShippingScreen = () => {
           setPostalCode={setPostalCode}
           phone={phone}
           setPhone={setPhone}
-          validation={
-            validationErrors.address && (
-              <p className="text-red-500 text-xs italic">
-                {validationErrors.address}
-              </p>
-            )
-          }
+          validationErrors={validationErrors}
         />
 
         {/* Billing Address */}
@@ -147,9 +156,9 @@ const ShippingScreen = () => {
               setBillingAddress({ ...billingAddress, phone: val })
             }
             validation={
-              validationErrors.address && (
+              validationErrors.billingAddress && (
                 <p className="text-red-500 text-xs italic">
-                  {validationErrors.address}
+                  {validationErrors.billingAddress}
                 </p>
               )
             }

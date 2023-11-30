@@ -12,7 +12,7 @@ const AddressForm = ({
   setPostalCode,
   phone,
   setPhone,
-  validation,
+  validationErrors,
 }) => {
   return (
     <>
@@ -33,6 +33,11 @@ const AddressForm = ({
             value={address}
             onChange={(e) => setAddress(e.target.value)}
           />
+          {validationErrors?.shippingAddress && (
+            <p className="text-red-500 text-xs italic">
+              {validationErrors.shippingAddress}
+            </p>
+          )}
         </div>
         <div className="w-full md:w-1/2 px-3 mb-6">
           <label
@@ -49,6 +54,11 @@ const AddressForm = ({
             value={city}
             onChange={(e) => setCity(e.target.value)}
           />
+          {validationErrors?.shippingCity && (
+            <p className="text-red-500 text-xs italic">
+              {validationErrors.shippingCity}
+            </p>
+          )}
         </div>
         <div className="w-full md:w-1/2 px-3">
           <label
@@ -65,6 +75,11 @@ const AddressForm = ({
             value={country}
             onChange={(e) => setCountry(e.target.value)}
           />
+          {validationErrors?.shippingCountry && (
+            <p className="text-red-500 text-xs italic">
+              {validationErrors.shippingCountry}
+            </p>
+          )}
         </div>
         <div className="w-full md:w-1/2 px-3 mb-6">
           <label
@@ -81,6 +96,11 @@ const AddressForm = ({
             value={state}
             onChange={(e) => setState(e.target.value)}
           />
+          {validationErrors?.shippingState && (
+            <p className="text-red-500 text-xs italic">
+              {validationErrors.shippingState}
+            </p>
+          )}
         </div>
         <div className="w-full md:w-1/2 px-3">
           <label
@@ -97,6 +117,11 @@ const AddressForm = ({
             value={postalCode}
             onChange={(e) => setPostalCode(e.target.value)}
           />
+          {validationErrors?.shippingPostalCode && (
+            <p className="text-red-500 text-xs italic">
+              {validationErrors.shippingPostalCode}
+            </p>
+          )}
         </div>
         <div className="w-full px-3 mb-6">
           <label
@@ -113,7 +138,11 @@ const AddressForm = ({
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
           />
-          {validation}
+          {validationErrors?.shippingPhone && (
+            <p className="text-red-500 text-xs italic">
+              {validationErrors.shippingPhone}
+            </p>
+          )}
         </div>
       </div>
     </>
