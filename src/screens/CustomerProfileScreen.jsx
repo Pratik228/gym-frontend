@@ -7,6 +7,7 @@ import { toast, ToastContainer } from "react-toastify";
 // import { useGetMyOrdersQuery } from "../slices/ordersApiSlice";
 // import { setCredentials } from "../slices/authSlice";
 import { BASE_URL, USERS_URL } from "../constants";
+import AddressForm from "../components/AddressForm";
 const defaultProfilePic = "https://loremflickr.com/640/360"; // Path to your default image
 const CustomerProfileScreen = () => {
   const { userInfo } = useSelector((state) => state.auth);
@@ -14,6 +15,53 @@ const CustomerProfileScreen = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [country, setCountry] = useState("");
   const [photo, setPhoto] = useState(defaultProfilePic);
+  const [showAddressModal, setShowAddressModal] = useState(false);
+  const [addresses, setAddresses] = useState([]);
+  const [newAddress, setNewAddress] = useState({
+    address: "",
+    city: "",
+    country: "",
+    state: "",
+    postalCode: "",
+    phone: "",
+  });
+  useEffect(() => {
+    const savedAddresses = localStorage.getItem("userAddresses");
+    console.log(savedAddresses);
+    if (savedAddresses) {
+      setAddresses(JSON.parse(savedAddresses));
+    }
+  }, []);
+
+  const saveAddress = () => {
+    const newAddress = {
+      address: "", // Fill these with actual data
+      city: "",
+      country: "",
+      state: "",
+      postalCode: "",
+      phone: "",
+    };
+    const updatedAddresses = [...addresses, newAddress];
+    setAddresses(updatedAddresses);
+    localStorage.setItem("userAddresses", JSON.stringify(updatedAddresses));
+    console.log(updatedAddresses);
+    setShowAddressModal(false);
+  };
+
+  const handleAddAddress = () => {
+    setShowAddressModal(true);
+  };
+
+  const handleAddressChange = (field, value) => {
+    setNewAddress({ ...newAddress, [field]: value });
+  };
+
+  const handleSaveAddress = (newAddress) => {
+    // Here you can also implement the logic to save the address to the backend
+    setAddresses([...addresses, newAddress]);
+    setShowAddressModal(false);
+  };
 
   // const { userInfo } = useSelector((state) => state.auth);
   // const { data: orders, isLoading, error } = useGetMyOrdersQuery();
@@ -42,24 +90,6 @@ const CustomerProfileScreen = () => {
   };
 
   const submitHandler = async (e) => {
-    e.preventDefault();
-    const emailParam = `${encodeURIComponent(userInfo.email)}`;
-    const url = `${BASE_URL}${USERS_URL}/${emailParam}`;
-
-    fetch(url, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        gender: userInfo?.gender,
-        phone: userInfo?.phoneNumber,
-        cookies: {
-          jwt: localStorage.getItem(""),
-        },
-      }),
-    });
-
     // if (password !== confirmPassword) {
     //   toast.error("Passwords do not match");
     // } else {
@@ -97,7 +127,7 @@ const CustomerProfileScreen = () => {
           />
         </label>
 
-        <form onSubmit={submitHandler} className="mt-4 grid grid-cols-2 gap-8">
+        <form onSubmit={submitHandler} className="mt-4 grid  gap-8">
           {/* Name */}
           <div>
             <label className="block text-lg font-medium text-white">
@@ -129,31 +159,71 @@ const CustomerProfileScreen = () => {
           {/* Password */}
           <div>
             <label className="block text-lg font-medium text-white">
-              Password
+              Phone
               <input
-                type="password"
-                value={"**************"}
-                onChange={(e) => setPassword(e.target.value)}
+                type="phone"
+                value={userInfo?.phone}
                 className="mt-2 block w-full p-1 bg-white text-black opacity-50 "
-                disabled
+                disa
               />
             </label>
           </div>
 
-          {/* Confirm Password */}
-          <div>
-            <label className="block text-lg font-medium text-white">
-              Confirm Password
-              <input
-                type="password"
-                value={"**************"}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                className="mt-2 block w-full p-1 bg-white text-black opacity-50"
-                disabled
-              />
-            </label>
+          <div className="mt-4">
+            <button
+              type="button"
+              onClick={handleAddAddress}
+              className="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+            >
+              Add Address
+            </button>
           </div>
+
+          {showAddressModal && (
+            <>
+              <AddressForm
+                title="Add New Address"
+                address={newAddress.address}
+                setAddress={(value) => handleAddressChange("address", value)}
+                city={newAddress.city}
+                setCity={(value) => handleAddressChange("city", value)}
+                country={newAddress.country}
+                setCountry={(value) => handleAddressChange("country", value)}
+                state={newAddress.state}
+                setState={(value) => handleAddressChange("state", value)}
+                postalCode={newAddress.postalCode}
+                setPostalCode={(value) =>
+                  handleAddressChange("postalCode", value)
+                }
+                phone={newAddress.phone}
+                setPhone={(value) => handleAddressChange("phone", value)}
+                validation={null}
+              />
+
+              <button
+                onClick={saveAddress}
+                className="mt-4 text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+              >
+                Save Address
+              </button>
+            </>
+          )}
         </form>
+
+        <div className="mt-6">
+          <h3 className="text-2xl font-bold text-white mb-4">
+            Your Addresses:
+          </h3>
+          <ul>
+            {addresses?.map((address, index) => (
+              <li key={index} className="text-white mb-2">
+                {/* Display address details */}
+                {address.address}, {address.city}, {address.country},
+                {address.state}, {address.postalCode}, {address.phone}
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </div>
   );

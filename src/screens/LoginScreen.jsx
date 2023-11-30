@@ -85,7 +85,13 @@ const LoginScreen = () => {
       navigate("/");
     } catch (err) {
       console.log(err);
-      setServerError(err?.data?.message || "An error occurred during login.");
+
+      if (!err.data) {
+        navigate("/maintenance");
+      } else {
+        // Handle other types of errors
+        setServerError(err?.data?.message || "An error occurred during login.");
+      }
 
       //Show server error on the login screen
     }

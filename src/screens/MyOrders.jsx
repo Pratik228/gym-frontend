@@ -45,7 +45,7 @@ const MyOrders = () => {
             </div>
             <div className="flex justify-between items-center">
               <p className="text-green-600 font-bold">
-                Status: {order.isDelivered ? "Delivered" : "Processing"}
+                Status: {order.orderStatus}
               </p>
             </div>
           </div>

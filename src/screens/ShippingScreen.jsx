@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import CheckoutSteps from "../components/CheckoutSteps";
 import { saveShippingAddress } from "../slices/cartSlice";
+import AddressForm from "../components/AddressForm";
 
 const ShippingScreen = () => {
   const cart = useSelector((state) => state.cart);
@@ -14,15 +15,60 @@ const ShippingScreen = () => {
   const [postalCode, setPostalCode] = useState(
     shippingAddress.postalCode || ""
   );
+  const [sameAsShipping, setSameAsShipping] = useState(false);
+  const [billingAddress, setBillingAddress] = useState({ ...shippingAddress });
+
+  const [validationErrors, setValidationErrors] = useState({});
+  const validateForm = () => {
+    const errors = {};
+    if (!address) errors.address = "Address is required";
+    if (!city) errors.city = "City is required";
+    if (!country) errors.country = "Country is required";
+    if (!state) errors.state = "State is required";
+    if (!postalCode) errors.postalCode = "Postal code is required";
+    if (!phone) errors.phone = "Phone number is required";
+
+    return errors;
+  };
   const [phone, setPhone] = useState(shippingAddress.phone || "");
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (sameAsShipping) {
+      setBillingAddress({
+        address,
+        city,
+        country,
+        state,
+        postalCode,
+        phone,
+      });
+    }
+  }, [sameAsShipping, address, city, country, state, postalCode, phone]);
+
   const submitHandler = (e) => {
     e.preventDefault();
-    dispatch(saveShippingAddress({ address, city, postalCode, country }));
-    navigate("/payment");
+    const errors = validateForm();
+    if (Object.keys(errors).length === 0) {
+      dispatch(
+        saveShippingAddress({
+          shippingAddress: {
+            address,
+            city,
+            postalCode,
+            country,
+            state,
+            phone,
+          },
+          billingAddress: sameAsShipping ? null : billingAddress,
+        })
+      );
+      navigate("/payment");
+    } else {
+      setValidationErrors(errors);
+    }
   };
 
   return (
@@ -33,117 +79,85 @@ const ShippingScreen = () => {
         onSubmit={submitHandler}
         className="space-y-8 bg-gray-800 p-4 rounded-lg"
       >
-        <div className="flex flex-wrap -mx-3 mb-6">
-          <div className="w-full px-3 mb-6 md:mb-0">
-            <label
-              className="block uppercase tracking-wide text-xs font-bold mb-2"
-              htmlFor="Address"
-            >
-              Address
-            </label>
+        <AddressForm
+          title="Shipping Address"
+          address={address}
+          setAddress={setAddress}
+          city={city}
+          setCity={setCity}
+          country={country}
+          setCountry={setCountry}
+          state={state}
+          setState={setState}
+          postalCode={postalCode}
+          setPostalCode={setPostalCode}
+          phone={phone}
+          setPhone={setPhone}
+          validation={
+            validationErrors.address && (
+              <p className="text-red-500 text-xs italic">
+                {validationErrors.address}
+              </p>
+            )
+          }
+        />
+
+        {/* Billing Address */}
+        <div className="mb-6">
+          <label className="block uppercase tracking-wide text-xs font-bold mb-2">
+            Billing Address
+          </label>
+          <label className="inline-flex items-center mt-3">
             <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-              id="Address"
-              type="text"
-              placeholder="Address"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
+              type="checkbox"
+              className="form-checkbox h-5 w-5 text-gray-600"
+              checked={sameAsShipping}
+              onChange={(e) => setSameAsShipping(e.target.checked)}
             />
-          </div>
+
+            <span className="ml-2 text-gray-400">Same as shipping address</span>
+          </label>
         </div>
 
-        {/* Row for City and Country */}
-        <div className="flex flex-wrap -mx-3 mb-6">
-          <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-            <label
-              className="block uppercase tracking-wide text-xs font-bold mb-2"
-              htmlFor="city"
-            >
-              City
-            </label>
-            <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-              id="city"
-              type="text"
-              placeholder="City"
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-            />
-          </div>
-          <div className="w-full md:w-1/2 px-3">
-            <label
-              className="block uppercase tracking-wide text-xs font-bold mb-2"
-              htmlFor="country"
-            >
-              Country
-            </label>
-            <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-              id="country"
-              type="text"
-              placeholder="Country"
-              value={country}
-              onChange={(e) => setCountry(e.target.value)}
-            />
-          </div>
-        </div>
-
-        <div className="flex flex-wrap -mx-3 mb-6">
-          <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-            <label
-              className="block uppercase tracking-wide text-xs font-bold mb-2"
-              htmlFor="state"
-            >
-              State / Province
-            </label>
-            <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-              id="state"
-              type="text"
-              placeholder="State"
-              value={state}
-              onChange={(e) => setState(e.target.value)}
-            />
-          </div>
-          <div className="w-full md:w-1/2 px-3">
-            <label
-              className="block uppercase tracking-wide text-xs font-bold mb-2"
-              htmlFor="postalCode"
-            >
-              Postal Code
-            </label>
-            <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-              id="postalCode"
-              type="text"
-              placeholder="Postal Code"
-              value={postalCode}
-              onChange={(e) => setPostalCode(e.target.value)}
-            />
-          </div>
-        </div>
-
-        <div className="flex flex-wrap -mx-3 mb-6">
-          <div className="w-full px-3 mb-6">
-            <label
-              className="block uppercase tracking-wide text-xs font-bold mb-2"
-              htmlFor="Phone"
-            >
-              Phone
-            </label>
-            <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-              id="Phone"
-              type="text"
-              placeholder="Phone"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-            />
-          </div>
-        </div>
+        {!sameAsShipping && (
+          <AddressForm
+            title="Billing Address"
+            address={billingAddress.address}
+            setAddress={(val) =>
+              setBillingAddress({ ...billingAddress, address: val })
+            }
+            city={billingAddress.city}
+            setCity={(val) =>
+              setBillingAddress({ ...billingAddress, city: val })
+            }
+            country={billingAddress.country}
+            setCountry={(val) =>
+              setBillingAddress({ ...billingAddress, country: val })
+            }
+            state={billingAddress.state}
+            setState={(val) =>
+              setBillingAddress({ ...billingAddress, state: val })
+            }
+            postalCode={billingAddress.postalCode}
+            setPostalCode={(val) =>
+              setBillingAddress({ ...billingAddress, postalCode: val })
+            }
+            phone={billingAddress.phone}
+            setPhone={(val) =>
+              setBillingAddress({ ...billingAddress, phone: val })
+            }
+            validation={
+              validationErrors.address && (
+                <p className="text-red-500 text-xs italic">
+                  {validationErrors.address}
+                </p>
+              )
+            }
+          />
+        )}
 
         <button
-          type="submit"
+          onClick={submitHandler}
           className="w-full flex justify-center py-2 px-4 rounded-md shadow-sm text-lg font-medium  bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         >
           Continue

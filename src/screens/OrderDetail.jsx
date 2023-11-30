@@ -20,6 +20,8 @@ const OrderDetail = () => {
   if (isLoading) return <Loader />;
   if (isError || !order) return <div>Error fetching order details.</div>;
 
+  console.log(order);
+
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8">
       <div className="flex flex-wrap -mx-4">
@@ -41,6 +43,16 @@ const OrderDetail = () => {
               </p>
             </div>
 
+            <div className="mb-4">
+              <h3 className="text-lg font-semibold text-white mb-2 flex items-center">
+                <LocalShipping className="mr-2" />
+                Billing :
+              </h3>
+              <p className="text-gray-300">
+                <strong>Address:</strong> {order.billingAddress}
+              </p>
+            </div>
+
             {/* Order Status */}
             <div className="mb-4">
               <h3 className="text-lg font-semibold text-white mb-2 flex items-center">
@@ -49,9 +61,7 @@ const OrderDetail = () => {
               </h3>
               <p className="text-gray-300">
                 <strong>Status: </strong>
-                <span className="text-yellow-400">
-                  {order.isDelivered ? "Delivered" : "Not Delivered"}
-                </span>
+                <span className="text-yellow-400">{order.orderStatus}</span>
               </p>
             </div>
 
