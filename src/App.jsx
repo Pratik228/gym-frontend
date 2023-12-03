@@ -4,6 +4,7 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { ToastContainer } from "react-bootstrap";
 import { Snackbar, Alert } from "@mui/material";
+import Modal from "react-modal";
 import { hideSnackbar, showSnackbar } from "./slices/snackbarSlice";
 
 import CustomerServiceScreen from "./screens/CustomerServiceScreen";
@@ -39,12 +40,15 @@ const darkTheme = createTheme({
   },
 });
 
+Modal.setAppElement("#root");
+
 const App = () => {
   const { userInfo } = useSelector((state) => state.auth);
   const snackbar = useSelector((state) => state.snackbar);
   const dispatch = useDispatch();
 
   useEffect(() => {
+    // Modal.setAppElement("#root");
     if (userInfo && userInfo.is_verified === 0) {
       // dispatch(
       //   showSnackbar({

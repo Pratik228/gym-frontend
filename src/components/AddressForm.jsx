@@ -1,22 +1,12 @@
 const AddressForm = ({
   title,
-  address,
-  setAddress,
-  city,
-  setCity,
-  country,
-  setCountry,
-  state,
-  setState,
-  postalCode,
-  setPostalCode,
-  phone,
-  setPhone,
+  newAddress,
+  handleInputChange,
   validationErrors,
 }) => {
   return (
     <>
-      <h3 className="text-lg font-semibold text-white mb-2">{title}</h3>
+      <h3 className="text-lg font-semibold text-white mb-4">{title}</h3>
       <div className="flex flex-wrap -mx-3 mb-6">
         <div className="w-full px-3 mb-6">
           <label
@@ -29,9 +19,10 @@ const AddressForm = ({
             className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
             id={`${title}-address`}
             type="text"
+            name="address"
             placeholder="Address"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
+            value={newAddress.address}
+            onChange={handleInputChange}
           />
           {validationErrors?.shippingAddress && (
             <p className="text-red-500 text-xs italic">
@@ -49,10 +40,11 @@ const AddressForm = ({
           <input
             className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
             id={`${title}-city`}
+            name="city"
             type="text"
             placeholder="City"
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
+            value={newAddress.city}
+            onChange={handleInputChange}
           />
           {validationErrors?.shippingCity && (
             <p className="text-red-500 text-xs italic">
@@ -72,8 +64,9 @@ const AddressForm = ({
             id={`${title}-country`}
             type="text"
             placeholder="Country"
-            value={country}
-            onChange={(e) => setCountry(e.target.value)}
+            name="country"
+            value={newAddress.country}
+            onChange={handleInputChange}
           />
           {validationErrors?.shippingCountry && (
             <p className="text-red-500 text-xs italic">
@@ -93,8 +86,9 @@ const AddressForm = ({
             id={`${title}-state`}
             type="text"
             placeholder="State"
-            value={state}
-            onChange={(e) => setState(e.target.value)}
+            name="state"
+            value={newAddress.state}
+            onChange={handleInputChange}
           />
           {validationErrors?.shippingState && (
             <p className="text-red-500 text-xs italic">
@@ -113,9 +107,10 @@ const AddressForm = ({
             className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
             id={`${title}-postalCode`}
             type="text"
+            name="postalCode"
             placeholder="Postal Code"
-            value={postalCode}
-            onChange={(e) => setPostalCode(e.target.value)}
+            value={newAddress.postalCode}
+            onChange={handleInputChange}
           />
           {validationErrors?.shippingPostalCode && (
             <p className="text-red-500 text-xs italic">
@@ -123,7 +118,7 @@ const AddressForm = ({
             </p>
           )}
         </div>
-        <div className="w-full px-3 mb-6">
+        <div className="w-full px-3">
           <label
             className="block uppercase tracking-wide text-xs font-bold mb-2"
             htmlFor={`${title}-phone`}
@@ -134,9 +129,10 @@ const AddressForm = ({
             className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
             id={`${title}-phone`}
             type="text"
+            name="phone"
             placeholder="Phone"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            value={newAddress.phone}
+            onChange={handleInputChange}
           />
           {validationErrors?.shippingPhone && (
             <p className="text-red-500 text-xs italic">
