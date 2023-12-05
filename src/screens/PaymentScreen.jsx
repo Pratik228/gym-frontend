@@ -1,20 +1,44 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import CheckoutSteps from "../components/CheckoutSteps";
-import { savePaymentMethod } from "../slices/cartSlice";
+import { savePaymentMethod, saveBillingAddress } from "../slices/cartSlice";
+import AddressForm from "../components/AddressForm";
+import useAddress from "../hooks/useAddress";
 
 const PaymentScreen = () => {
   const [paymentMethod, setPaymentMethod] = useState("PayPal");
+  const [showBillingAddress, setShowBillingAddress] = useState(false);
+  const {
+    newAddress: billingAddress,
+    handleInputChange,
+    validationErrors,
+    validateForm,
+  } = useAddress();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    // Initially hide billing address form unless 'Card' is selected
+    setShowBillingAddress(paymentMethod === "Card");
+  }, [paymentMethod]);
+
   const submitHandler = (e) => {
     e.preventDefault();
+    if (paymentMethod === "Card" && !validateForm()) {
+      // Validate billing address form if Card is selected
+      return;
+    }
+
     dispatch(savePaymentMethod(paymentMethod));
+
+    if (paymentMethod === "Card") {
+      // Save billing address for card payment
+      dispatch(saveBillingAddress(billingAddress));
+    }
+
     navigate("/placeorder");
   };
-
   return (
     <div className="mx-auto max-w-2xl px-4 py-4 sm:px-6 lg:px-0">
       <CheckoutSteps step1 step2 step3 />
@@ -91,6 +115,17 @@ const PaymentScreen = () => {
                     className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                   />
                 </div>
+
+                {showBillingAddress && (
+                  <div className="mt-6">
+                    <AddressForm
+                      title="Billing Address"
+                      newAddress={billingAddress}
+                      handleInputChange={handleInputChange}
+                      validationErrors={validationErrors}
+                    />
+                  </div>
+                )}
               </div>
             )}
 

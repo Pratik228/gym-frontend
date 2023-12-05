@@ -29,10 +29,10 @@ const customStyles = {
 };
 
 const ShippingScreen = () => {
-  const cart = useSelector((state) => state.cart);
   const [showModal, setShowModal] = useState(false);
   const [addresses, setAddresses] = useState([]);
   const [currentAddress, setCurrentAddress] = useState(null);
+  const [selectedAddressIndex, setSelectedAddressIndex] = useState(null);
   const {
     newAddress: address,
     handleInputChange,
@@ -40,7 +40,30 @@ const ShippingScreen = () => {
     validateForm,
   } = useAddress();
 
-  const [sameAsShipping, setSameAsShipping] = useState(false);
+  const handleAddressSelect = (index) => {
+    setSelectedAddressIndex(index);
+  };
+
+  const submitHandler = (e) => {
+    e.preventDefault();
+    const selectedAddress = addresses[selectedAddressIndex];
+    if (selectedAddress) {
+      dispatch(
+        saveShippingAddress({
+          shippingAddress: selectedAddress,
+        })
+      );
+      navigate("/payment");
+    } else {
+      dispatch(
+        showSnackbar({
+          message: "Please select a shipping address.",
+          severity: "error",
+        })
+      );
+    }
+  };
+  // const [sameAsShipping, setSameAsShipping] = useState(false);
 
   const openModal = (index = null) => {
     setShowModal(true);
@@ -87,68 +110,48 @@ const ShippingScreen = () => {
     closeModal();
   };
 
-  const deleteAddress = (index) => {
-    const updatedAddresses = addresses.filter((_, i) => i !== index);
-    setAddresses(updatedAddresses);
-    localStorage.setItem("userAddresses", JSON.stringify(updatedAddresses));
-    dispatch(
-      showSnackbar({
-        message: "Address deleted successfully.",
-        severity: "success",
-      })
-    );
-  };
-
-  const submitHandler = (e) => {
-    dispatch(
-      saveShippingAddress({
-        shippingAddress: address,
-        // billingAddress: sameAsShipping ? null : billingAddress,
-      })
-    );
-    navigate("/payment");
-  };
-
   return (
     <div className="mx-auto max-w-2xl px-4 py-4 sm:px-6 lg:px-0">
       <CheckoutSteps step1 step2 />
       <h1 className="text-xl font-bold mb-8">Shipping Information</h1>
 
       <div className="space-y-8 bg-gray-800 p-4 rounded-lg">
-        <AddressList
-          addresses={addresses}
-          onEdit={openModal}
-          onDelete={deleteAddress}
-        />
+        <div className="mt-6">
+          <h3 className="text-2xl font-bold text-white mb-4">Your Addresses</h3>
+          <ul>
+            {addresses.map((address, index) => (
+              <li
+                key={index}
+                className={`text-white mb-2 bg-gray-700 p-8 rounded-lg flex justify-between items-center hover:bg-gray-600 cursor-pointer ${
+                  index === selectedAddressIndex ? "bg-blue-500" : ""
+                }`}
+                onClick={() => handleAddressSelect(index)}
+              >
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={index === selectedAddressIndex}
+                    onChange={() => handleAddressSelect(index)}
+                    className="form-checkbox h-5 w-5 text-gray-600 mr-2"
+                  />
+                  <div>
+                    {address.address}, {address.city}, {address.country},{" "}
+                    {address.state}, {address.postalCode}, {address.phone}
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
         <button onClick={openModal} className="btn-primary mt-4">
           Add New Address
         </button>
-        <form onSubmit={submitHandler}>
-          {/* Billing Address */}
-          <div className="mb-6">
-            <label className="block uppercase tracking-wide text-xs font-bold mb-2">
-              Billing Address
-            </label>
-            <label className="inline-flex items-center mt-3">
-              <input
-                type="checkbox"
-                className="form-checkbox h-5 w-5 text-gray-600"
-                checked={sameAsShipping}
-                onChange={(e) => setSameAsShipping(e.target.checked)}
-              />
-
-              <span className="ml-2 text-gray-400">
-                Same as shipping address
-              </span>
-            </label>
-          </div>
-          <button
-            onClick={submitHandler}
-            className="w-full flex justify-center py-2 px-4 rounded-md shadow-sm text-lg font-medium  bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-          >
-            Continue
-          </button>
-        </form>
+        <button
+          onClick={submitHandler}
+          className="w-full flex justify-center py-2 px-4 rounded-md shadow-sm text-lg font-medium  bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        >
+          Continue
+        </button>
       </div>
 
       <Modal

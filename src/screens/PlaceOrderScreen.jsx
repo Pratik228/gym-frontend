@@ -74,14 +74,19 @@ const PlaceOrderScreen = () => {
               </p>
             </div>
 
-            <div className="mb-4">
-              <h3 className="text-lg font-semibold text-white mb-2">Billing</h3>
-              <p className="text-gray-300">
-                <strong>Address:</strong> {cart.billingAddress.address},
-                {cart.billingAddress.city} {cart.billingAddress.postalCode},
-                {cart.billingAddress.country}
-              </p>
-            </div>
+            {cart.paymentMethod === "Card" && (
+              <div className="mb-4">
+                <h3 className="text-lg font-semibold text-white mb-2">
+                  Billing
+                </h3>
+                <p className="text-gray-300">
+                  <strong>Address:</strong> {cart.billingAddress.address},
+                  {cart.billingAddress.city} {cart.billingAddress.postalCode},
+                  {cart.billingAddress.country}
+                </p>
+              </div>
+            )}
+
             <div>
               <h3 className="text-lg font-semibold text-white mb-2">
                 Payment Method

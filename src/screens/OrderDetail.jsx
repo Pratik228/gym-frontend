@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
+
+import { showSnackbar } from "../slices/snackbarSlice";
 import { useDispatch } from "react-redux";
-import { useGetOrderDetailsQuery } from "../slices/ordersApiSlice";
+import {
+  useGetOrderDetailsQuery,
+  useCancelOrderMutation,
+} from "../slices/ordersApiSlice";
 import Loader from "../components/Loader";
 import {
   LocalShipping,
@@ -17,10 +22,34 @@ const OrderDetail = () => {
 
   const { data: order, isLoading, isError } = useGetOrderDetailsQuery(id);
 
+  const [cancelOrder] = useCancelOrderMutation();
+
   if (isLoading) return <Loader />;
   if (isError || !order) return <div>Error fetching order details.</div>;
 
-  console.log(order);
+  // Function to handle order cancellation
+  const handleCancelOrder = async () => {
+    try {
+      const res = await cancelOrder(id).unwrap();
+
+      dispatch(
+        showSnackbar({
+          message: "Order cancelled successfully!",
+          severity: "success",
+        })
+      );
+    } catch (error) {
+      console.log(error);
+      dispatch(
+        showSnackbar({
+          message: "Error cancelling order.",
+          severity: "error",
+        })
+      );
+    }
+  };
+
+  const canCancelOrder = ["Placed", "Shipped"].includes(order.orderStatus);
 
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -31,7 +60,6 @@ const OrderDetail = () => {
             <h2 className="text-xl font-bold text-white mb-4">
               Order Details (ID: {order.id})
             </h2>
-
             {/* Shipping Information */}
             <div className="mb-4">
               <h3 className="text-lg font-semibold text-white mb-2 flex items-center">
@@ -42,17 +70,18 @@ const OrderDetail = () => {
                 <strong>Address:</strong> {order.shippingAddress}
               </p>
             </div>
-
-            <div className="mb-4">
-              <h3 className="text-lg font-semibold text-white mb-2 flex items-center">
-                <LocalShipping className="mr-2" />
-                Billing :
-              </h3>
-              <p className="text-gray-300">
-                <strong>Address:</strong> {order.billingAddress}
-              </p>
-            </div>
-
+            {/* Shipping Information */}
+            {order.paymentMethod === "Card" && (
+              <div className="mb-4">
+                <h3 className="text-lg font-semibold text-white mb-2 flex items-center">
+                  <LocalShipping className="mr-2" />
+                  Billing
+                </h3>
+                <p className="text-gray-300">
+                  <strong>Address:</strong> {order.billingAddress}
+                </p>
+              </div>
+            )}
             {/* Order Status */}
             <div className="mb-4">
               <h3 className="text-lg font-semibold text-white mb-2 flex items-center">
@@ -64,7 +93,6 @@ const OrderDetail = () => {
                 <span className="text-yellow-400">{order.orderStatus}</span>
               </p>
             </div>
-
             {/* Payment Method */}
             <div className="mb-4">
               <h3 className="text-lg font-semibold text-white mb-2 flex items-center">
@@ -75,7 +103,6 @@ const OrderDetail = () => {
                 <strong>Method:</strong> {order.paymentMethod}
               </p>
             </div>
-
             {/* Order Items */}
             <h2 className="text-xl font-bold text-white mb-2">Order Items</h2>
             {order.orderItems.map((item, index) => (
@@ -101,7 +128,6 @@ const OrderDetail = () => {
                 </div>
               </div>
             ))}
-
             {/* Order Summary */}
             <h2 className="text-xl font-bold text-white mt-4 mb-2">
               Order Summary
@@ -132,6 +158,14 @@ const OrderDetail = () => {
                 </span>
               </div>
             </div>
+            {canCancelOrder && (
+              <button
+                onClick={handleCancelOrder}
+                className="mt-4 px-4 py-2 text-white bg-red-600 hover:bg-red-700 rounded focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+              >
+                Cancel Order
+              </button>
+            )}
           </div>
         </div>
       </div>
