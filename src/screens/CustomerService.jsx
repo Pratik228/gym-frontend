@@ -164,7 +164,7 @@ const CustomerService = () => {
 
 				<div className="relative bg-gray-800 p-4 w-full max-h-full">
 					<div className="flex gap-2">
-						<button className="btn-primary">Save</button>
+						<button className="btn-primary">Send</button>
 						<button
 							onClick={closeModal}
 							className="btn-primary">
