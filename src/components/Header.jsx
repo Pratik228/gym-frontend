@@ -65,120 +65,161 @@ const Header = () => {
           />
           <div className="text-2xl font-semibold">MinimalAura</div>
         </div>
-        <div className="flex space-x-6 items-center">
-          <NavLink
-            to="/"
-            className={({ isActive }) =>
-              isActive
-                ? "text-indigo-400 hover:text-indigo-500"
-                : "hover:text-indigo-500"
-            }
-          >
-            Home
-          </NavLink>
-          <NavLink
-            to="/products"
-            className={({ isActive }) =>
-              isActive
-                ? "text-indigo-400 hover:text-indigo-500"
-                : "hover:text-indigo-500"
-            }
-          >
-            Products
-          </NavLink>
-          {userInfo && (
+        {userInfo && userInfo.isAdmin === 1 && (
+          <div className="flex space-x-6 items-center">
             <NavLink
-              to="/profile"
+              to="/admin/productlist"
               className={({ isActive }) =>
                 isActive
                   ? "text-indigo-400 hover:text-indigo-500"
                   : "hover:text-indigo-500"
               }
             >
-              Profile
+              Products
             </NavLink>
-          )}
-          <NavLink
-            to="/cart"
-            className={({ isActive }) =>
-              isActive
-                ? "text-indigo-400 hover:text-indigo-500"
-                : "hover:text-indigo-500"
-            }
-          >
-            <div className="flex items-center space-x-3">
-              <Badge
-                badgeContent={itemCount()}
-                color="primary"
-                overlap="circular"
-              >
-                <ShoppingCartIcon className="hover:text-indigo-500 cursor-pointer" />
-              </Badge>
-              <span className="ml-2">Cart</span>
+            <NavLink
+              to="/admin/orderlist"
+              className={({ isActive }) =>
+                isActive
+                  ? "text-indigo-400 hover:text-indigo-500"
+                  : "hover:text-indigo-500"
+              }
+            >
+              Orders
+            </NavLink>
+            <NavLink
+              to="/admin/customer-service"
+              className={({ isActive }) =>
+                isActive
+                  ? "text-indigo-400 hover:text-indigo-500"
+                  : "hover:text-indigo-500"
+              }
+            >
+              Service
+            </NavLink>
+            <div className="flex items-center cursor-pointer">
+              <AccountCircleIcon className="text-white" />
+              <span className="text-white ml-2">{userInfo.name}</span>
             </div>
-          </NavLink>
-          <NavLink
-            to="/customer-service"
-            className={({ isActive }) =>
-              isActive
-                ? "text-indigo-400 hover:text-indigo-500"
-                : "hover:text-indigo-500"
-            }
-          >
-            <SupportAgentIcon className="hover:text-indigo-500 mr-2  cursor-pointer" />
-            <span className="mr-2">Service</span>
-          </NavLink>
-          {userInfo ? (
-            <>
-              <div className="relative group">
-                <div className="flex items-center cursor-pointer">
-                  <AccountCircleIcon className="text-white" />
-                  <span className="text-white ml-2">{userInfo.name}</span>
-                </div>
-                <div className="absolute group-hover:block dropdown-menu hidden right-0 w-36 bg-gray-700 rounded-md shadow-xl z-20 transition-opacity duration-300 ease-in-out group-hover:opacity-100">
-                  <ul className="py-2">
-                    <li>
-                      <NavLink
-                        to="/profile"
-                        className="block px-4 py-2 hover:bg-gray-800 text-white"
-                      >
-                        My Profile
-                      </NavLink>
-                    </li>
-                    <li>
-                      <NavLink
-                        to="/my-orders"
-                        className="block px-4 py-2 hover:bg-gray-800 text-white"
-                      >
-                        My Orders
-                      </NavLink>
-                    </li>
-                    <li className="py-1">
-                      <hr className="border-t border-gray-600" />
-                      <span
-                        onClick={logoutHandler}
-                        className="block px-4 py-2 hover:bg-gray-800 text-white cursor-pointer"
-                      >
-                        Logout
-                      </span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </>
-          ) : (
+          </div>
+        )}
+
+        {userInfo && userInfo.isAdmin === 0 && (
+          <div className="flex space-x-6 items-center">
             <NavLink
-              to="/login"
+              to="/"
               className={({ isActive }) =>
                 isActive
                   ? "text-indigo-400 hover:text-indigo-500"
                   : "hover:text-indigo-500"
               }
             >
-              Login
+              Home
             </NavLink>
-          )}
-        </div>
+            <NavLink
+              to="/products"
+              className={({ isActive }) =>
+                isActive
+                  ? "text-indigo-400 hover:text-indigo-500"
+                  : "hover:text-indigo-500"
+              }
+            >
+              Products
+            </NavLink>
+            {userInfo && (
+              <NavLink
+                to="/profile"
+                className={({ isActive }) =>
+                  isActive
+                    ? "text-indigo-400 hover:text-indigo-500"
+                    : "hover:text-indigo-500"
+                }
+              >
+                Profile
+              </NavLink>
+            )}
+            <NavLink
+              to="/cart"
+              className={({ isActive }) =>
+                isActive
+                  ? "text-indigo-400 hover:text-indigo-500"
+                  : "hover:text-indigo-500"
+              }
+            >
+              <div className="flex items-center space-x-3">
+                <Badge
+                  badgeContent={itemCount()}
+                  color="primary"
+                  overlap="circular"
+                >
+                  <ShoppingCartIcon className="hover:text-indigo-500 cursor-pointer" />
+                </Badge>
+                <span className="ml-2">Cart</span>
+              </div>
+            </NavLink>
+            <NavLink
+              to="/customer-service"
+              className={({ isActive }) =>
+                isActive
+                  ? "text-indigo-400 hover:text-indigo-500"
+                  : "hover:text-indigo-500"
+              }
+            >
+              <SupportAgentIcon className="hover:text-indigo-500 mr-2  cursor-pointer" />
+              <span className="mr-2">Service</span>
+            </NavLink>
+            {userInfo ? (
+              <>
+                <div className="relative group">
+                  <div className="flex items-center cursor-pointer">
+                    <AccountCircleIcon className="text-white" />
+                    <span className="text-white ml-2">{userInfo.name}</span>
+                  </div>
+                  <div className="absolute group-hover:block dropdown-menu hidden right-0 w-36 bg-gray-700 rounded-md shadow-xl z-20 transition-opacity duration-300 ease-in-out group-hover:opacity-100">
+                    <ul className="py-2">
+                      <li>
+                        <NavLink
+                          to="/profile"
+                          className="block px-4 py-2 hover:bg-gray-800 text-white"
+                        >
+                          My Profile
+                        </NavLink>
+                      </li>
+                      <li>
+                        <NavLink
+                          to="/my-orders"
+                          className="block px-4 py-2 hover:bg-gray-800 text-white"
+                        >
+                          My Orders
+                        </NavLink>
+                      </li>
+                      <li className="py-1">
+                        <hr className="border-t border-gray-600" />
+                        <span
+                          onClick={logoutHandler}
+                          className="block px-4 py-2 hover:bg-gray-800 text-white cursor-pointer"
+                        >
+                          Logout
+                        </span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <NavLink
+                to="/login"
+                className={({ isActive }) =>
+                  isActive
+                    ? "text-indigo-400 hover:text-indigo-500"
+                    : "hover:text-indigo-500"
+                }
+              >
+                Login
+              </NavLink>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

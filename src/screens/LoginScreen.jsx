@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../components/Loader";
-import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 import { hideSnackbar } from "../slices/snackbarSlice";
 import { toast, ToastContainer } from "react-toastify";
@@ -32,8 +31,10 @@ const LoginScreen = () => {
 
   useEffect(() => {
     if (userInfo && userInfo.is_verified === 0) {
-      console.log("I am Here");
       navigate("/update-password");
+    }
+    if (userInfo && userInfo.isAdmin === 1) {
+      navigate("/admin/productlist");
     } else if (userInfo) {
       navigate(redirect);
     }

@@ -52,17 +52,6 @@ const OrderListScreen = () => {
       <div className="flex flex-wrap -mx-4">
         <div className="w-full px-4">
           <h1 className="text-xl font-semibold mb-4">Order Management</h1>
-          <div className="flex mb-4">
-            <button className="mr-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-              Order Management
-            </button>
-            <button className="mr-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-              Product Management
-            </button>
-            {/* <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-              User Management
-            </button> */}
-          </div>
 
           {/* Orders List */}
           <div className="bg-gray-800 shadow overflow-hidden sm:rounded-lg mb-4">
