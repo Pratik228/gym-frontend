@@ -65,7 +65,7 @@ const Header = () => {
           />
           <div className="text-2xl font-semibold">MinimalAura</div>
         </div>
-        {userInfo && userInfo.isAdmin === 1 && (
+        {userInfo && userInfo.isAdmin === 1 ? (
           <div className="flex space-x-6 items-center">
             <NavLink
               to="/admin/productlist"
@@ -110,9 +110,7 @@ const Header = () => {
               </span>
             </div>
           </div>
-        )}
-
-        {userInfo && userInfo.isAdmin === 0 && (
+        ) : (
           <div className="flex space-x-6 items-center">
             <NavLink
               to="/"
