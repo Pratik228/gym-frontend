@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
+import Modal from "react-modal";
+import { Star, StarBorder, StarHalf } from "@mui/icons-material";
 
 import { showSnackbar } from "../slices/snackbarSlice";
 import { useDispatch } from "react-redux";
 import {
   useGetOrderDetailsQuery,
   useCancelOrderMutation,
+  useSubmitFeedbackMutation,
 } from "../slices/ordersApiSlice";
 import Loader from "../components/Loader";
 import {
@@ -16,11 +19,54 @@ import {
   AccessTime,
 } from "@mui/icons-material";
 
+const customStyles = {
+  content: {
+    top: "50%",
+    left: "50%",
+    right: "auto",
+    bottom: "auto",
+    marginRight: "-50%",
+    transform: "translate(-50%, -50%)",
+    border: "none",
+    padding: 0,
+    overflow: "visible",
+  },
+  overlay: {
+    backgroundColor: "rgba(0, 0, 0, 0.75)",
+  },
+};
+
+// Function to render star rating
+const renderStarRating = (rating) => {
+  let stars = [];
+  for (let i = 1; i <= 5; i++) {
+    if (i <= rating) {
+      stars.push(<Star key={i} style={{ color: "yellow" }} />);
+    } else if (i - 1 < rating && i > rating) {
+      stars.push(<StarHalf key={i} style={{ color: "yellow" }} />);
+    } else {
+      stars.push(<StarBorder key={i} style={{ color: "yellow" }} />);
+    }
+  }
+  return stars;
+};
+
 const OrderDetail = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [feedback, setFeedback] = useState({ rating: 0, description: "" });
 
-  const { data: order, isLoading, isError } = useGetOrderDetailsQuery(id);
+  const [submitFeedback] = useSubmitFeedbackMutation();
+
+  const {
+    data: order,
+    isLoading,
+    isError,
+    refetch,
+  } = useGetOrderDetailsQuery(id);
+
+  console.log(order);
 
   const [cancelOrder] = useCancelOrderMutation();
 
@@ -46,6 +92,21 @@ const OrderDetail = () => {
           severity: "error",
         })
       );
+    }
+  };
+
+  // Handle feedback submit
+  const handleFeedbackSubmit = async () => {
+    console.log(feedback);
+
+    try {
+      await submitFeedback({ orderId: order.id, feedback }).unwrap();
+      dispatch(showSnackbar({ message: "Feedback submitted successfully!" }));
+      refetch();
+      setShowFeedbackModal(false);
+    } catch (error) {
+      console.log(error);
+      dispatch(showSnackbar({ message: "Error submitting feedback." }));
     }
   };
 
@@ -158,6 +219,28 @@ const OrderDetail = () => {
                 </span>
               </div>
             </div>
+
+            {/* Feedback Section */}
+            {order.orderStatus === "Delivered" &&
+              (order.feedbackRating || order.feedbackDescription) && (
+                <div className="mt-4 bg-gray-700 p-4 rounded-lg">
+                  <h3 className="text-lg font-semibold text-white mb-2">
+                    Feedback
+                  </h3>
+                  <div className="text-gray-300 mb-2">
+                    <div className="flex items-center mb-2">
+                      <span className="mr-2">Rating:</span>
+                      <div className="flex">
+                        {renderStarRating(order.feedbackRating)}
+                      </div>
+                    </div>
+                    <div>
+                      <span className="mr-2">Description:</span>
+                      <p>{order.feedbackDescription}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
             {canCancelOrder && (
               <button
                 onClick={handleCancelOrder}
@@ -166,6 +249,57 @@ const OrderDetail = () => {
                 Cancel Order
               </button>
             )}
+
+            {/* Feedback */}
+            {order.orderStatus === "Delivered" && (
+              <button
+                onClick={() => setShowFeedbackModal(true)}
+                className="mt-4 px-4 py-2 text-white bg-green-600 hover:bg-green-700 rounded focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
+              >
+                {order.feedbackRating ? "Edit Feedback" : "Add Feedback"}
+              </button>
+            )}
+
+            <Modal
+              isOpen={showFeedbackModal}
+              style={customStyles}
+              onRequestClose={() => setShowFeedbackModal(false)}
+            >
+              <div className="bg-gray-800 p-4 rounded-lg">
+                <h3 className="text-lg font-semibold text-white mb-4">
+                  Add Feedback
+                </h3>
+                <div className="mb-4">
+                  <label className="text-white mb-2">Rating</label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="5"
+                    value={feedback.rating}
+                    onChange={(e) =>
+                      setFeedback({ ...feedback, rating: e.target.value })
+                    }
+                    className="w-full text-gray-700 rounded py-2 px-4"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="text-white mb-2">Description</label>
+                  <textarea
+                    value={feedback.description}
+                    onChange={(e) =>
+                      setFeedback({ ...feedback, description: e.target.value })
+                    }
+                    className="w-full text-gray-700  rounded py-2 px-4"
+                  />
+                </div>
+                <button
+                  onClick={handleFeedbackSubmit}
+                  className="px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                >
+                  Submit Feedback
+                </button>
+              </div>
+            </Modal>
           </div>
         </div>
       </div>

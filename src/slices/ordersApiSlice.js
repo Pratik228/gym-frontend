@@ -59,6 +59,13 @@ export const orderApiSlice = apiSlice.injectEndpoints({
         method: "PUT",
       }),
     }),
+    submitFeedback: builder.mutation({
+      query: ({ orderId, feedback }) => ({
+        url: `${ORDERS_URL}/${orderId}/feedback`,
+        method: "POST",
+        body: feedback,
+      }),
+    }),
   }),
 });
 
@@ -72,4 +79,5 @@ export const {
   useDeliverOrderMutation,
   useShipOrderMutation,
   useCancelOrderMutation,
+  useSubmitFeedbackMutation,
 } = orderApiSlice;

@@ -101,6 +101,14 @@ const Header = () => {
               <AccountCircleIcon className="text-white" />
               <span className="text-white ml-2">{userInfo.name}</span>
             </div>
+            <div className="flex items-center cursor-pointer">
+              <span
+                onClick={logoutHandler}
+                className="block hover:bg-gray-800 text-white cursor-pointer"
+              >
+                Logout
+              </span>
+            </div>
           </div>
         )}
 
