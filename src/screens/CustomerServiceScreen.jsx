@@ -1,114 +1,129 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
-import {
-  TextField,
-  Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-} from "@mui/material";
+import { useSelector, useDispatch } from "react-redux";
+import Modal from "react-modal";
+import { useCreateIssueMutation } from "../slices/issuesApiSlice";
+import { showSnackbar } from "../slices/snackbarSlice";
 
-import { toast, ToastContainer } from "react-toastify";
-
-import axios from "axios";
+Modal.setAppElement("#root");
 
 function CustomerServiceScreen() {
   const { userInfo } = useSelector((state) => state.auth);
 
-  console.log(userInfo);
-  const [open, setOpen] = useState(false); // For controlling the dialog/modal
+  const dispatch = useDispatch();
+
+  const [createIssue] = useCreateIssueMutation();
+  const [modalIsOpen, setIsOpen] = useState(false);
   const [formData, setFormData] = useState({
-    name: "",
-    email: userInfo?.email,
-    message: "",
+    title: "",
+    description: "",
+    priority: "Low",
+    email: userInfo?.email || "",
   });
-  // Open the dialog
-  const handleOpen = () => setOpen(true);
 
-  // Close the dialog
-  const handleClose = () => setOpen(false);
+  const openModal = () => setIsOpen(true);
+  const closeModal = () => setIsOpen(false);
 
-  // Handle form field changes
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setFormData((prevState) => ({ ...prevState, [name]: value }));
+    setFormData({ ...formData, [name]: value });
   };
 
-  // Handle form submission
   const handleSubmit = async () => {
-    // Simulate sending an API request to raise an issue
     try {
-      handleClose();
-
-      toast.success("Issue has been raised :)");
-      const response = await axios.post(
-        "http://localhost:5000/api/support/issue",
-        formData
-      );
+      console.log("Submitting issue:", formData);
+      await createIssue(formData).unwrap();
+      dispatch(showSnackbar({ message: "Issue raised successfully." }));
+      closeModal();
     } catch (error) {
-      console.error("Error when sending the issue:", error);
-      toast.error("Somethin went wrong. Please try again.");
+      dispatch(
+        showSnackbar({
+          message: "Error when raising an issue.",
+          severity: "error",
+        })
+      );
     }
   };
 
   return (
     <div className="p-4">
-      <div className="flex flex-row justify-between p-5">
-        <h2 className="text-2xl mb-4">Customer Service</h2>
-        <Button variant="outlined" onClick={handleOpen}>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-semibold">Customer Service</h2>
+        <button
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          onClick={openModal}
+        >
           Reach Out via Email
-        </Button>
+        </button>
       </div>
-
-      <div className="p-5">
+      <div>
         <p>Customer Service Email: hello@minimal.io</p>
-        <p>Customer Service Contact: +US xxxx xxxxx </p>
+        <p>Customer Service Contact: +US xxxx xxxxx</p>
       </div>
 
-      {/* Dialog/Modal for raising an issue */}
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Describe your issue</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            label="Name"
-            name="name"
-            fullWidth
-            variant="outlined"
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        className="bg-gray-800 rounded-lg p-5 mx-auto my-20 max-w-lg"
+        overlayClassName="fixed inset-0 bg-black bg-opacity-30"
+      >
+        <h3 className="text-lg font-semibold mb-4">Describe your issue</h3>
+        <form className="space-y-4">
+          <input
+            type="text"
+            name="title"
+            value={formData.title}
             onChange={handleChange}
-            value={userInfo?.name}
+            className="w-full p-2 border rounded text-gray-800"
+            placeholder="Issue Title"
           />
-          <TextField
-            margin="dense"
-            label="Email"
+          <textarea
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            className="w-full p-2 border rounded text-gray-800"
+            placeholder="Issue Description"
+            rows="4"
+          />
+          <label>Priority</label>
+          <select
+            name="priority"
+            value={formData.priority}
+            onChange={handleChange}
+            className="w-full p-2 border rounded text-gray-800"
+            aria-label="Priority"
+          >
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+          </select>
+          <label>Email</label>
+          <input
+            type="email"
             name="email"
-            fullWidth
-            variant="outlined"
+            value={formData.email}
             onChange={handleChange}
-            value={userInfo?.email}
+            disabled={userInfo?.email}
+            className="w-full p-2 border rounded text-gray-800"
+            placeholder="Your Email"
           />
-          <TextField
-            margin="dense"
-            label="Message"
-            name="message"
-            fullWidth
-            variant="outlined"
-            multiline
-            rows={4}
-            onChange={handleChange}
-            value={formData.message}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleSubmit} variant="contained">
-            Submit
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <ToastContainer />
+          <div className="flex justify-end space-x-2">
+            <button
+              type="button"
+              onClick={closeModal}
+              className="px-4 py-2 border rounded bg-red-500"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={handleSubmit}
+              className="px-4 py-2 border rounded bg-blue-500 text-white hover:bg-blue-600"
+            >
+              Submit
+            </button>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 }
