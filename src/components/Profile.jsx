@@ -6,6 +6,8 @@ import { useNavigate } from "react-router-dom";
 function Profile() {
 	const { userInfo } = useSelector((state) => state.auth);
 	const [photo, setPhoto] = useState(defaultProfilePic);
+	const [receivesNotifications, setReceivesNotifications] = useState(false);
+
 	const [user, setUser] = useState(userInfo);
 	const [updateUser, { isLoading }] = useUpdateUserMutation();
 	const navigate = useNavigate();
@@ -104,6 +106,18 @@ function Profile() {
 							}
 							className="mt-2 block w-full p-1 bg-white text-black opacity-50 "
 						/>
+					</label>
+				</div>
+				<div className="flex flex-row mt-4">
+					<input
+						type="checkbox"
+						checked={receivesNotifications}
+						onChange={(e) => setReceivesNotifications(e.target.checked)}
+						className="mt-1 mr-2"
+					/>
+
+					<label className="block text-lg font-medium text-white">
+						Would you like to receive notifications?
 					</label>
 				</div>
 
