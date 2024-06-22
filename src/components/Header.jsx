@@ -58,12 +58,8 @@ const Header = () => {
     <div className="bg-gray-800 shadow-md mb-8">
       <div className="container mx-auto flex items-center justify-between">
         <div className="flex items-center">
-          <img
-            src="/img/Logo.png"
-            alt="MinimalAura Logo"
-            className="w-24 h-24"
-          />
-          <div className="text-2xl font-semibold">MinimalAura</div>
+          <img src="/img/logo.png" alt="Fithub Logo" className="w-24 h-24" />
+          <div className="text-2xl font-semibold">FitHub</div>
         </div>
         {userInfo && userInfo.isAdmin === 1 ? (
           <div className="flex space-x-6 items-center">
